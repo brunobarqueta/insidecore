@@ -1,7 +1,7 @@
-import { useAuthStore } from '../store/auth';
+import Cookies from 'js-cookie';
 import axios from './axios';
 import jwt_decode from 'jwt-decode';
-import Cookies from 'js-cookie';
+import { useAuthStore } from '../store/auth';
 
 export const login = async (username, password) => {
     try {
@@ -21,12 +21,15 @@ export const login = async (username, password) => {
     }
 };
 
-export const register = async (username, password, password2) => {
+export const register = async (username, password, password2, fullName, cpf, phone) => {
     try {
         const { data } = await axios.post('register/', {
             username,
             password,
             password2,
+            fullName,
+            cpf,
+            phone
         });
         await login(username, password);
         return { data, error: null };

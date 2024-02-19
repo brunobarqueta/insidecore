@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 import { useAuthStore } from '../store/auth';
 
 const Home = () => {
@@ -15,15 +16,16 @@ const Home = () => {
 
 const LoggedInView = ({ user }) => {
     return (
-        <div>
-            <h1>Welcome {user.username}</h1>
-            <Link to="/private">
-                <button>Private</button>
-            </Link>
-            <Link to="/logout">
-                <button>Logout</button>
-            </Link>
-        </div>
+        // <div>
+        //     <h1>Welcome {user.username}</h1>
+        //     <Link to="/private">
+        //         <button>Private</button>
+        //     </Link>
+        //     <Link to="/logout">
+        //         <button>Logout</button>
+        //     </Link>
+        // </div>
+        <NavBar />
     );
 };
 

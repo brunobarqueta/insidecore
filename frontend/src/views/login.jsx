@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
+
+import BaseBackground from '../components/login/BaseBackground';
+import Input from '../components/Input';
+import LoginButton from '../components/login/LoginButton';
+import LoginOptions from '../components/login/LoginOptions';
+import User from '../assets/user.svg';
+import backgroundOffice from '../assets/background-office.png';
 import { login } from '../utils/auth';
-import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
+import { useNavigate } from 'react-router-dom';
+import womanWithIPad from '../assets/woman-with-ipad.png';
 
 const Login = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [buttonEnabled, setButtonEnabled] = useState(false);
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
     useEffect(() => {
@@ -30,33 +39,48 @@ const Login = () => {
             resetForm();
         }
     };
+
+    useEffect(() => {
+        handleEnablingLoginButton();
+    }, [username, password]);
+
+    const handleEnablingLoginButton = () => {
+        setButtonEnabled(username !== '' && password !== '');
+    };
+
     return (
-        <section>
-            <h1>Login</h1>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
+        <>
+            <BaseBackground>
+                <div className="md:w-1/2 flex flex-col justify-center items-center">
+                    <img className="rounded h-full w-screen" src={backgroundOffice} />
+                    {/* object-scale-down */}
                 </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                <div className="md:w-1/2 flex flex-col items-center">
+                    <form className="w-full max-w-lg mt-4" onSubmit={handleLogin}>
+                        <img src={User} className="relative mt-4" alt="User" />
+                        <Input
+                            type="text"
+                            className="mt-16"
+                            name="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="E-mail"
+                        />
+                        <Input
+                            type="password"
+                            className="mt-6"
+                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Senha"
+                        />
+                        <LoginOptions />
+                        <LoginButton className="mt-24" buttonEnabled={buttonEnabled} />
+                    </form>
                 </div>
-                <button type="submit">Login</button>
-            </form>
-        </section>
+            </BaseBackground>
+            <img className="absolute top-[-1rem] left-32 w-1/3 pointer-events-none" src={womanWithIPad} />
+        </>
     );
 };
 
