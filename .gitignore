@@ -1,1 +1,16 @@
-.vscode
+*.pyc
+venv/
+.env
+**/migrations/
+*.sqlite3
+node_modules/
+/build
+/dist
+npm-debug.log*
+.env.local
+.vscode/
+.idea/
+*.iml
+.DS_Store
+__pycache__/
+.coverage/
