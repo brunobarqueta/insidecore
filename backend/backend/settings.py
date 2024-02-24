@@ -21,10 +21,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'api',
+    'logins',
+    'prices',
 ]
 
-AUTH_USER_MODEL = 'api.CustomUser'
+AUTH_USER_MODEL = 'logins.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
