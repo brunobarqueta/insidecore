@@ -1,6 +1,0 @@
-REGISTRO_INEXISTENTE = 'Não foi possível localizar o registro selecionado.'
-FALHA_OPERACAO = 'Ocorreu um erro ao realizar essa operação.'
-PK_INVALIDO = 'Identificador de registro informado é inválido'
-CAMPO_INVALIDO = 'Campo {} é inválido. Não são aceitos valores {}.'
-CAMPO_OBRIGATORIO = 'Campo {} é obrigatório.'
-ENTRADA_VAZIA = 'Nenhum dado foi informado para realizar alterações.'

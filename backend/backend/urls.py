@@ -30,7 +30,6 @@ def get_routes_api(url_patterns, prefix='', routes:list = [], is_depreciated = F
     routes_depreciate.sort(key=str.lower)
     return (routes, routes_depreciate)
 
-
 (routes, routes_depreciated) = get_routes_api(urlpatterns)
 routes.insert(0, '/depreciated')
 
@@ -43,4 +42,4 @@ def get_routes_depreciated(request):
     return Response(routes_depreciated)
             
 urlpatterns.append(path('', get_routes))
-urlpatterns.append(path('depreciated', get_routes_depreciated))
+urlpatterns.append(path('depreciated/', get_routes_depreciated))

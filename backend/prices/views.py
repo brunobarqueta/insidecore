@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from rest_framework.exceptions import MethodNotAllowed
-from tools_rest.response_view import success, bad_request
+from tools_rest.response_view import success
 from . import models, serializers
-from prices.tools import constantes
-from prices.tools.helpers import validate_if_id_exist
 from rest_framework import generics
 
 class PriceListCreateView(generics.ListCreateAPIView):
@@ -17,12 +15,9 @@ class PriceListCreateView(generics.ListCreateAPIView):
         
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return success(serializer.data)
-        
-        first_error = next(iter(serializer.errors.values()))[0]
-        return bad_request(first_error)
     
 class PriceGetPutDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Price.objects.all()
@@ -33,38 +28,32 @@ class PriceGetPutDeleteView(generics.RetrieveUpdateDestroyAPIView):
             return serializers.PriceGetPutSerializer
         elif self.request.method == 'DELETE':
             return serializers.PriceDeleteSerializer
-        return self.serializer_class
+        return serializers.PriceGetPutSerializer
     
     def partial_update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("PATCH method is not allowed")
+        raise MethodNotAllowed(request.method)
     
     def retrieve(self, request, *args, **kwargs):
-        validate = validate_if_id_exist(self)
-        if not validate.success:
-            return bad_request(validate.errors)
-        
-        serializer = self.get_serializer(validate.result)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
         return success(serializer.data)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
         
-        validate = validate_if_id_exist(self)
-        if not validate.success:
-            return bad_request(validate.errors)
-        
-        serializer = self.get_serializer(validate.result, data=request.data, partial=partial)
-        if serializer.is_valid():
+        instance = self.get_object()
+        data = request.data.copy()
+        serializer_instance = self.serializer_class()
+        for name in serializer_instance.fields:
+            if data.get(name, None) is None:
+                data[name] = getattr(instance, name)
+            
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        if serializer.is_valid(raise_exception=True):
             self.perform_update(serializer)
             return success(serializer.data)
-            
-        first_error = next(iter(serializer.errors.values()))[0]
-        return bad_request(first_error)
 
     def destroy(self, request, *args, **kwargs):
-        validate = validate_if_id_exist(self)
-        if not validate.success:
-            return bad_request(validate.errors)
-        
-        self.perform_destroy(validate.result)
+        instance = self.get_object()
+        self.perform_destroy(instance)
         return success(True)

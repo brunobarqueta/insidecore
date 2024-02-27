@@ -9,6 +9,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CUSTOM_EXCEPTION = {
+    'ADD_CUSTOM_HANDLER': True
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -120,9 +123,9 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
