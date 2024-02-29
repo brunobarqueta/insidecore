@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import BaseBackground from '../components/login/BaseBackground';
+import BaseBackground from '../components/BaseBackground';
 import LoginButton from '../components/login/LoginButton';
 import LoginData from '../components/register/LoginData';
 import PersonalData from '../components/register/PersonalData';

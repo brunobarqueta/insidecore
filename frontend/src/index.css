@@ -1,7 +1,10 @@
+@import 'typeface-inter';
+@import 'typeface-nunito';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-    
+    background-color: #1C4390;
 }
