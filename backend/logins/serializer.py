@@ -1,24 +1,20 @@
-from .models import CustomUser
-from . import validators
-from django.contrib.auth.password_validation import validate_password
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from logins.models import CustomUser
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.exceptions import ParseError
+from logins import validators
 import re
 
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+class GenerateTokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
-        # Add custom claims
-        token['username'] = user.username
+        
+        token['name'] = user.fullname
         token['email'] = user.email
-        # ...
-
         return token
-
+    
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
@@ -44,6 +40,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         if not validators.validate_passwords(attrs['password'], attrs['password2']):
             raise serializers.ValidationError(
                 {"password2": "Senhas informadas são diferentes."})
+        
+        # Verificar se o e-mail já está em uso
+        if CustomUser.objects.filter(email=attrs['email']).exists():
+            raise ParseError("Ocorreu um erro ao criar usuario")
         
         return attrs
 

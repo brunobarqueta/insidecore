@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include("logins.depreciated.urlsdepreciated")),
+    path('api/', include("logins.deprecated.urls")),
     path('api/v1/login/', include("logins.urls")),
     path('api/v1/prices/', include("prices.urls"))
 ]
