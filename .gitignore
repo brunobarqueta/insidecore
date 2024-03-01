@@ -3,6 +3,9 @@
 
 ### VisualStudioCode ###
 .vscode/*
+*.vdcode/
+.vscode
+*.vdcode
 
 ### Django ###
 *.log
