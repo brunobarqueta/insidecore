@@ -8,7 +8,7 @@ def validate_fullname(fullname:str) -> bool:
     return len(palavras) > 1
 
 def validate_phone(phone:str) -> bool:
-    return re.match(r'^\(?[\d]{2}\)?[ ]?[9][ ]?[\d]{4}[-]?[\d]{4}$', phone)
+    return re.match(r'^\(?[\d]{2}\)?[ ]?[9]?[ ]?[\d]{4}[-]?[\d]{4}$', phone)
 
 def validate_cpf_mask(cpf:str) -> bool:
     return re.match(r'^(\d{3}[.]){2}\d{3}-\d{2}$', cpf)

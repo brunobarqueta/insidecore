@@ -10,5 +10,5 @@ pytz==2023.3
 sqlparse==0.4.3
 toml==0.10.2
 tomli==2.0.1
-tools-kit==0.1.7
+tools-kit==0.1.8
 tzdata==2023.3
