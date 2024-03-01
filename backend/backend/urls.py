@@ -19,7 +19,7 @@ def get_routes_api(url_patterns, prefix='', routes:list = [], is_depreciated = F
         if isinstance(pattern, URLResolver):
             if pattern.pattern._route == 'admin/':
                 continue
-            is_depreciated = pattern.urlconf_module.__name__.__contains__('depreciated')
+            is_depreciated = pattern.urlconf_module.__name__.__contains__('deprecated')
             get_routes_api(pattern.url_patterns, prefix + pattern.pattern._route, routes, is_depreciated, routes_depreciate)
         elif isinstance(pattern, URLPattern):
             path = f'/{prefix}{pattern.pattern._route}'
