@@ -6,9 +6,6 @@ class Tenant(ActiveBaseAbstract):
     code = models.CharField(max_length=255, blank=False)
     name = models.CharField(max_length=765, blank=False)
 
-    def alter_active_situation(self):
-        self.active = not self.active
-
 class TenantAllPropertiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant

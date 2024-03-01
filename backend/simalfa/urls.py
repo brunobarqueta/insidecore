@@ -1,5 +1,5 @@
 from django.urls import path
-from simalfa.views import TenantCrudView, MetricsCrudView, FormulaCrudView
+from simalfa.views import TenantCrudView, MetricsCrudView, FormulaCrudView, ServiceItemCrudView, ServiceItemMetricsCrudView
 
 urlpatterns = [
     path('tenant/', TenantCrudView.TenantListCreateView.as_view(), name='tenant-list-create'),
@@ -8,4 +8,8 @@ urlpatterns = [
     path('metrics/<int:pk>/', MetricsCrudView.MetricsGetAlterDeleteView.as_view(), name='mestrics-get-alter-delete'),
     path('formula/', FormulaCrudView.FormulaListCreateView.as_view(), name='metrics-list-create'),
     path('formula/<int:pk>/', FormulaCrudView.FormulaGetAlterDeleteView.as_view(), name='mestrics-get-alter-delete'),
+    path('service-item/', ServiceItemCrudView.ServiceItemListCreateView.as_view(), name='service-item-list-create'),
+    path('service-item/<int:pk>/', ServiceItemCrudView.ServiceItemGetAlterDeleteView.as_view(), name='service-item-get-alter-delete'),
+    path('service-item-metrics/', ServiceItemMetricsCrudView.ServiceItemMetricsListCreateView.as_view(), name='service-item-metrics-list-create'),
+    path('service-item-metrics/<int:pk>/', ServiceItemMetricsCrudView.ServiceItemMetricsGetAlterDeleteView.as_view(), name='service-item-metrics-get-alter-delete'),
 ]

@@ -6,10 +6,8 @@ from simalfa.models.abstracts import EntityCommonAbstract
 class Formula(EntityCommonAbstract):
     description = models.CharField(max_length=255, blank=False)
     expression = models.CharField(max_length=4000, blank=False)
+    type_service = models.SmallIntegerField(blank=False)
     tenants = models.ManyToManyField(Tenant,blank=True)
-    
-    def alter_active_situation(self):
-        self.active = not self.active
     
 class FormulaAllPropertiesSerializer(serializers.ModelSerializer):
     tenants = serializers.SerializerMethodField()

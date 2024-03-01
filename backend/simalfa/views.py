@@ -3,8 +3,8 @@ from tools_rest.response_view import success
 from simalfa.models.tenant import (Tenant, TenantAllPropertiesSerializer, TenantListCreateSerializer, TenantGetAlterDeleteSerializer)
 from simalfa.models.metrics import (Metrics, MetricsAllPropertiesSerializer, MetricsListCreateSerializer, MetricsGetAlterDeleteSerializer)
 from simalfa.models.formula import (Formula, FormulaAllPropertiesSerializer, FormulaListCreateSerializer, FormulaGetAlterDeleteSerializer)
-#from simalfa.models.serviceitem import *
-#from simalfa.models.serviceitemmetrcs import *
+from simalfa.models.serviceitem import (ServiceItem, ServiceItemAllPropertiesSerializer, ServiceItemListCreateSerializer, ServiceItemGetAlterDeleteSerializer)
+from simalfa.models.serviceitemmetrcs import (ServiceItemMetrics, ServiceItemMetricsAllPropertiesSerializer, ServiceItemMetricsListCreateSerializer, ServiceItemMetricsGetAlterDeleteSerializer)
 
 # Create your views here.
 class TenantCrudView:
@@ -144,6 +144,104 @@ class FormulaCrudView:
             if serializer.is_valid(raise_exception=True):
                 self.perform_update(serializer)
                 retorno = FormulaAllPropertiesSerializer(instance, data=request.data)
+                retorno.is_valid(raise_exception=True)
+                return success(retorno.data)
+
+        def destroy(self, request, *args, **kwargs):
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return success(True)
+        
+class ServiceItemCrudView:
+    class ServiceItemListCreateView(generics.ListCreateAPIView):
+        queryset = ServiceItem.objects.all()
+        serializer_class = ServiceItemListCreateSerializer
+        
+        def list(self, request, *args, **kwargs):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = ServiceItemAllPropertiesSerializer(queryset, many=True)
+            return success(serializer.data)
+        
+        def post(self, request, *args, **kwargs):
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                instance = serializer.save()
+                instance_serializer = ServiceItemAllPropertiesSerializer(instance)
+                return success(instance_serializer.data)
+        
+    class ServiceItemGetAlterDeleteView(generics.RetrieveUpdateDestroyAPIView):
+        queryset = ServiceItem.objects.all()
+        serializer_class = ServiceItemGetAlterDeleteSerializer
+            
+        def partial_update(self, request, *args, **kwargs):
+            instance = self.get_object()
+            instance.alter_active_situation()
+            
+            serializer = ServiceItemAllPropertiesSerializer(instance, data=instance.__dict__, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return success(serializer.data)
+    
+        def retrieve(self, request, *args, **kwargs):
+            instance = self.get_object()
+            serializer = ServiceItemAllPropertiesSerializer(instance)
+            return success(serializer.data)
+
+        def update(self, request, *args, **kwargs):
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                self.perform_update(serializer)
+                retorno = ServiceItemAllPropertiesSerializer(instance, data=request.data)
+                retorno.is_valid(raise_exception=True)
+                return success(retorno.data)
+
+        def destroy(self, request, *args, **kwargs):
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return success(True)
+
+class ServiceItemMetricsCrudView:
+    class ServiceItemMetricsListCreateView(generics.ListCreateAPIView):
+        queryset = ServiceItemMetrics.objects.all()
+        serializer_class = ServiceItemMetricsListCreateSerializer
+        
+        def list(self, request, *args, **kwargs):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = ServiceItemMetricsAllPropertiesSerializer(queryset, many=True)
+            return success(serializer.data)
+        
+        def post(self, request, *args, **kwargs):
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                instance = serializer.save()
+                instance_serializer = ServiceItemMetricsAllPropertiesSerializer(instance)
+                return success(instance_serializer.data)
+        
+    class ServiceItemMetricsGetAlterDeleteView(generics.RetrieveUpdateDestroyAPIView):
+        queryset = ServiceItemMetrics.objects.all()
+        serializer_class = ServiceItemMetricsGetAlterDeleteSerializer
+            
+        def partial_update(self, request, *args, **kwargs):
+            instance = self.get_object()
+            instance.alter_active_situation()
+            
+            serializer = ServiceItemMetricsAllPropertiesSerializer(instance, data=instance.__dict__, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return success(serializer.data)
+    
+        def retrieve(self, request, *args, **kwargs):
+            instance = self.get_object()
+            serializer = ServiceItemMetricsAllPropertiesSerializer(instance)
+            return success(serializer.data)
+
+        def update(self, request, *args, **kwargs):
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                self.perform_update(serializer)
+                retorno = ServiceItemMetricsAllPropertiesSerializer(instance, data=request.data)
                 retorno.is_valid(raise_exception=True)
                 return success(retorno.data)
 
