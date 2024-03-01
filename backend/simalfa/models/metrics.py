@@ -7,7 +7,7 @@ class Metrics(EntityCommonAbstract):
     description = models.CharField(max_length=255, blank=False)
     type = models.CharField(max_length=50)
     service = models.CharField(max_length=4000, blank=False)
-    tenants = models.ManyToManyField(Tenant, null=True, blank=True)
+    tenants = models.ManyToManyField(Tenant,blank=True)
     
     def alter_active_situation(self):
         self.active = not self.active
