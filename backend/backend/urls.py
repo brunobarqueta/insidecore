@@ -9,8 +9,9 @@ from rest_framework.response import Response
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("logins.deprecated.urls")),
-    path('api/v1/login/', include("logins.urls")),
-    path('api/v1/prices/', include("prices.urls"))
+    path('login/api/v1/', include("logins.urls")),
+    path('prices/api/v1/', include("prices.urls")),
+    path('simalfa/api/v1/', include("simalfa.urls"))
 ]
 
 def get_routes_api(url_patterns, prefix='', routes:list = [], is_depreciated = False, routes_depreciate:list = []):

@@ -9,9 +9,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-CUSTOM_EXCEPTION = {
-    'ADD_CUSTOM_HANDLER': True
-}
+#CUSTOM_EXCEPTION = {
+#    'ADD_CUSTOM_HANDLER': True
+#}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'logins',
     'prices',
+    'simalfa',
 ]
 
 AUTH_USER_MODEL = 'logins.CustomUser'
