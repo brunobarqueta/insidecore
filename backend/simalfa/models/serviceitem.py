@@ -1,8 +1,8 @@
 from django.db import models
 from rest_framework import serializers
-from abstracts import EntityCommonAbstract
-from models.tenant import Tenant , TenantAllPropertiesSerializer
-from models.formula import Formula, FormulaAllPropertiesSerializer
+from simalfa.models.abstracts import EntityCommonAbstract
+from simalfa.models.tenant import Tenant , TenantAllPropertiesSerializer
+from simalfa.models.formula import Formula, FormulaAllPropertiesSerializer
 
 class ServiceItem(EntityCommonAbstract):
     code = models.CharField(max_length=255, blank=False)

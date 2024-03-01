@@ -1,10 +1,10 @@
 from django.db import models
 from rest_framework import serializers
-from models.abstracts import EntityCommonAbstract
-from models.metrics import Metrics
-from backend.simalfa.models.serviceitem import ServiceItem
-from models.tenant import Tenant, TenantAllPropertiesSerializer
-from models.metrics import Metrics, MetricsAllPropertiesSerializer
+from simalfa.models.abstracts import EntityCommonAbstract
+from simalfa.models.metrics import Metrics
+from simalfa.models.serviceitem import ServiceItem
+from simalfa.models.tenant import Tenant, TenantAllPropertiesSerializer
+from simalfa.models.metrics import Metrics, MetricsAllPropertiesSerializer
 
 class ServiceItemMetrics(EntityCommonAbstract):
     value = models.DecimalField(max_digits=25, decimal_places=5)
