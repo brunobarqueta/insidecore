@@ -7,7 +7,6 @@ from simalfa.models.tenant import Tenant, TenantAllPropertiesSerializer
 from simalfa.models.metrics import Metrics, MetricsAllPropertiesSerializer
 
 class ServiceItemMetrics(EntityCommonAbstract):
-    value = models.DecimalField(max_digits=25, decimal_places=5)
     service_item = models.ManyToManyField(ServiceItem,blank=False)
     tenants = models.ManyToManyField(Tenant,blank=True)
     metrics = models.ManyToManyField(Metrics)
