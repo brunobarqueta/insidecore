@@ -1,18 +1,20 @@
 from rest_framework import generics
 from tools_rest.response_view import success
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from simalfa.models.service import (Service, ServiceSerializer)
 from simalfa.models.item import (Items, ItemsSerializer)
 from simalfa.models.tenant import (Tenant, TenantAllPropertiesSerializer, TenantListCreateSerializer, TenantGetAlterDeleteSerializer)
 from simalfa.models.metrics import (Metrics, MetricsAllPropertiesSerializer, MetricsListCreateSerializer, MetricsGetAlterDeleteSerializer)
 from simalfa.models.formula import (Formula, FormulaAllPropertiesSerializer, FormulaListCreateSerializer, FormulaGetAlterDeleteSerializer)
 from simalfa.models.serviceitem import (ServiceItem, ServiceItemAllPropertiesSerializer, ServiceItemListCreateSerializer, ServiceItemGetAlterDeleteSerializer)
-from simalfa.models.serviceitemmetrcs import (ServiceItemMetrics, ServiceItemMetricsAllPropertiesSerializer, ServiceItemMetricsListCreateSerializer, ServiceItemMetricsGetAlterDeleteSerializer)
 
 # Create your views here.
 class TenantCrudView:
     class TenantListCreateView(generics.ListCreateAPIView):
         queryset = Tenant.objects.all()
         serializer_class = TenantListCreateSerializer
+        permission_classes = [IsAuthenticated]
         
         def list(self, request, *args, **kwargs):
 
@@ -29,6 +31,7 @@ class TenantCrudView:
     class TenantGetAlterDeleteView(generics.RetrieveUpdateDestroyAPIView):
         queryset = Tenant.objects.all()
         serializer_class = TenantGetAlterDeleteSerializer
+        permission_classes = [IsAuthenticated]
             
         def partial_update(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -60,6 +63,7 @@ class MetricsCrudView:
     class MetricsListCreateView(generics.ListCreateAPIView):
         queryset = Metrics.objects.all()
         serializer_class = MetricsListCreateSerializer
+        permission_classes = [IsAuthenticated]
         
         def list(self, request, *args, **kwargs):
             queryset = self.filter_queryset(self.get_queryset())
@@ -76,6 +80,7 @@ class MetricsCrudView:
     class MetricsGetAlterDeleteView(generics.RetrieveUpdateDestroyAPIView):
         queryset = Metrics.objects.all()
         serializer_class = MetricsGetAlterDeleteSerializer
+        permission_classes = [IsAuthenticated]
             
         def partial_update(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -109,6 +114,7 @@ class FormulaCrudView:
     class FormulaListCreateView(generics.ListCreateAPIView):
         queryset = Formula.objects.all()
         serializer_class = FormulaListCreateSerializer
+        permission_classes = [IsAuthenticated]
         
         def list(self, request, *args, **kwargs):
             queryset = self.filter_queryset(self.get_queryset())
@@ -125,6 +131,7 @@ class FormulaCrudView:
     class FormulaGetAlterDeleteView(generics.RetrieveUpdateDestroyAPIView):
         queryset = Formula.objects.all()
         serializer_class = FormulaGetAlterDeleteSerializer
+        permission_classes = [IsAuthenticated]
             
         def partial_update(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -158,6 +165,7 @@ class ServiceItemCrudView:
     class ServiceItemListCreateView(generics.ListCreateAPIView):
         queryset = ServiceItem.objects.all()
         serializer_class = ServiceItemListCreateSerializer
+        permission_classes = [IsAuthenticated]
         
         def list(self, request, *args, **kwargs):
             queryset = self.filter_queryset(self.get_queryset())
@@ -174,6 +182,7 @@ class ServiceItemCrudView:
     class ServiceItemGetAlterDeleteView(generics.RetrieveUpdateDestroyAPIView):
         queryset = ServiceItem.objects.all()
         serializer_class = ServiceItemGetAlterDeleteSerializer
+        permission_classes = [IsAuthenticated]
             
         def partial_update(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -207,6 +216,7 @@ class ServicesCrudView:
     class GetGroupsView(generics.ListAPIView):
         queryset = Service().get_defaults_groups()
         serializer_class = ServiceSerializer
+        permission_classes = [IsAuthenticated]
         
         def list(self, request, *args, **kwargs):
             groups = self.get_queryset()
@@ -217,6 +227,7 @@ class ServicesCrudView:
         queryset = Items().get_defaults_items()
         serializer_class = ItemsSerializer
         lookup_field = 'code_group'
+        permission_classes = [IsAuthenticated]
         
         def list(self, request, *args, **kwargs):
             queryset = self.get_queryset()

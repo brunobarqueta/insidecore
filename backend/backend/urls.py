@@ -6,11 +6,12 @@ from django.urls.resolvers import URLResolver, URLPattern
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+url = 'http://127.0.0.1:8000'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("logins.deprecated.urls")),
     path('login/api/v1/', include("logins.urls")),
-    path('prices/api/v1/', include("prices.urls")),
     path('simalfa/api/v1/', include("simalfa.urls"))
 ]
 
@@ -24,15 +25,15 @@ def get_routes_api(url_patterns, prefix='', routes:list = [], is_depreciated = F
         elif isinstance(pattern, URLPattern):
             path = f'/{prefix}{pattern.pattern._route}'
             if is_depreciated:
-                routes_depreciate.append(path)
+                routes_depreciate.append(url+path)
             else:
-                routes.append(path)
+                routes.append(url+path)
     routes.sort(key=str.lower)
     routes_depreciate.sort(key=str.lower)
     return (routes, routes_depreciate)
 
 (routes, routes_depreciated) = get_routes_api(urlpatterns)
-routes.insert(0, '/depreciated')
+routes.insert(0, f'{url}/depreciated')
 
 @api_view(['GET'])
 def get_routes(request):
