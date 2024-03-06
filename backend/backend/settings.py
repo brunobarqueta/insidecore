@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'logins',
     'simalfa',
+    'drf_yasg',
 ]
 
 AUTH_USER_MODEL = 'logins.CustomUser'

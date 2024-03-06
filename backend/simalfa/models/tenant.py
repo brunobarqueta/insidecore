@@ -16,7 +16,7 @@ class TenantListCreateSerializer(serializers.ModelSerializer):
         model = Tenant
         exclude = ['active']
     
-class TenantGetAlterDeleteSerializer(serializers.ModelSerializer):
+class TenantGetAlterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant
         exclude = ['id']

@@ -4,11 +4,16 @@ Django==4.2
 django-cors-headers==3.14.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
+drf-yasg==1.21.7
+inflection==0.5.1
+packaging==23.2
 pycodestyle==2.10.0
 PyJWT==2.6.0
 pytz==2023.3
+PyYAML==6.0.1
 sqlparse==0.4.3
 toml==0.10.2
 tomli==2.0.1
 tools-kit==0.1.8
 tzdata==2023.3
+uritemplate==4.1.1

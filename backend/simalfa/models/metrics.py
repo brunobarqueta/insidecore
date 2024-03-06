@@ -24,7 +24,7 @@ class MetricsListCreateSerializer(serializers.ModelSerializer):
         model = Metrics
         exclude = ['active']
     
-class MetricsGetAlterDeleteSerializer(serializers.ModelSerializer):
+class MetricsGetAlterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Metrics
         exclude = ['id']

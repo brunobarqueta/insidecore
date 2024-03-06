@@ -23,7 +23,7 @@ class FormulaListCreateSerializer(serializers.ModelSerializer):
         model = Formula
         exclude = ['active']
     
-class FormulaGetAlterDeleteSerializer(serializers.ModelSerializer):
+class FormulaGetAlterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Formula
         exclude = ['id']
