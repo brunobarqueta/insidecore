@@ -1,38 +1,38 @@
 from django.db import models
 from rest_framework import serializers
-from simalfa.models.abstracts import EntityCommonAbstract
+from simalfa.models.abstracts import ActiveBaseAbstract
 from simalfa.models.metrics import Metrics
-from simalfa.models.serviceitem import ServiceItem
 from simalfa.models.tenant import Tenant, TenantAllPropertiesSerializer
 from simalfa.models.metrics import Metrics, MetricsAllPropertiesSerializer
 
-class ServiceItemMetrics(EntityCommonAbstract):
-    service_item = models.ManyToManyField(ServiceItem,blank=False)
-    tenants = models.ManyToManyField(Tenant,blank=True)
-    metrics = models.ManyToManyField(Metrics)
+class ServiceItemMetrics(ActiveBaseAbstract):
+    value = models.DecimalField(max_digits=25, decimal_places=5)
+    tenant = models.ForeignKey(Tenant, null=True, blank=True, on_delete=models.CASCADE)
+    metric = models.ForeignKey(Metrics, null=True, blank=True, on_delete=models.CASCADE)
     
-class ServiceItemMetricsAllPropertiesSerializer(serializers.Serializer):
-    tenants = serializers.SerializerMethodField()
-    metrics = serializers.SerializerMethodField()
-    
-    def get_tenants(self, obj):
-        tenant_instances = obj.tenants.all()
-        return TenantAllPropertiesSerializer(tenant_instances, many=True).data
-    
-    def get_metrics(self, obj):
-        tenant_instances = obj.metrics.all()
-        return MetricsAllPropertiesSerializer(tenant_instances, many=True).data
-    
+class ServiceItemMetricsAllPropertiesSerializer(serializers.ModelSerializer):
+    tenant = serializers.SerializerMethodField()
+    metric = serializers.SerializerMethodField()
     class Meta:
-        models = ServiceItemMetrics
+        model = ServiceItemMetrics
         fields = '__all__'
-        
+    
+    def get_tenant(self, obj):
+        instance = obj.tenant
+        if instance:
+            return TenantAllPropertiesSerializer(instance).data
+    
+    def get_metric(self, obj):
+        instance = obj.metric
+        if instance:
+            return MetricsAllPropertiesSerializer(instance).data
+         
 class ServiceItemMetricsListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceItemMetrics
         exclude = ['active']
     
-class ServiceItemMetricsGetAlterDeleteSerializer(serializers.ModelSerializer):
+class ServiceItemMetricsGetAlterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceItemMetrics
         exclude = ['id']

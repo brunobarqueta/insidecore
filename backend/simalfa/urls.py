@@ -3,6 +3,7 @@ from simalfa.views import (TenantCrudView,
                            MetricsCrudView,
                            FormulaCrudView,
                            ServiceItemCrudView,
+                           ServiceItemMetricsCrudView,
                            ServicesCrudView)
 
 urlpatterns = [
@@ -15,6 +16,9 @@ urlpatterns = [
     #service-items
     path('service-item/', ServiceItemCrudView.ServiceItemGetCreateView.as_view(), name='service-item-get-create'),
     path('service-item/<int:pk>/', ServiceItemCrudView.ServiceItemGetAlterView.as_view(), name='service-item-get-alter'),
+    #service-items-metrics
+    path('service-item-metrics/', ServiceItemMetricsCrudView.ServiceItemMetricsGetPostView.as_view(), name='service-item-metrics-get-create'),
+    path('service-item-metrics/<int:pk>/', ServiceItemMetricsCrudView.ServiceItemMetricsGetPutPatchView.as_view(), name='service-item-metrics-get-alter'),
     #tenants
     path('tenant/', TenantCrudView.TenantGetCreateView.as_view(), name='tenant-get-create'),
     path('tenant/<int:pk>/', TenantCrudView.TenantGetPutView.as_view(), name='tenant-get-put-patch'),
