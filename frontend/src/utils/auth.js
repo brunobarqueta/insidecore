@@ -6,7 +6,7 @@ import { useAuthStore } from '../store/auth';
 export const login = async (username, password) => {
     try {
         const { data, status } = await axios.post('token/', {
-            username,
+            email: username,
             password,
         });
         if (status === 200) {
@@ -21,13 +21,13 @@ export const login = async (username, password) => {
     }
 };
 
-export const register = async (username, password, password2, fullName, cpf, phone) => {
+export const register = async (username, password, password2, fullname, cpf, phone) => {
     try {
         const { data } = await axios.post('register/', {
-            username,
+            email: username,
             password,
             password2,
-            fullName,
+            fullname,
             cpf,
             phone
         });

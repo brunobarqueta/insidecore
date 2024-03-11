@@ -3,8 +3,8 @@ import MaskInput from '../MaskInput';
 import profileIcon from '../../assets/profile-icon.svg';
 
 const PersonalData = ({
-    fullName,
-    setFullName,
+    fullname,
+    setFullname,
     cpf,
     setCpf,
     phone,
@@ -20,8 +20,8 @@ const PersonalData = ({
                 <Input
                     type="text"
                     name="name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
                     placeholder="Nome completo"
                 />
             </div>
