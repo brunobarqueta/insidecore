@@ -12,7 +12,7 @@ import { useAuthStore } from '../store/auth';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
-    const [fullName, setFullName] = useState('');
+    const [fullname, setFullname] = useState('');
     const [cpf, setCpf] = useState('');
     const [phone, setPhone] = useState('');
     const [username, setUsername] = useState('');
@@ -37,7 +37,7 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { error } = await register(username, password, password2, fullName, cpf, phone);
+        const { error } = await register(username, password, password2, fullname, cpf, phone);
         if (error) {
             alert(JSON.stringify(error));
         } else {
@@ -52,7 +52,7 @@ function Register() {
 
     const handleEnablingLoginButton = () => {
         setButtonEnabled(
-            fullName !== '' && cpf !== '' && phone !== '' && username !== '' && password !== '' && password2 !== ''
+            fullname !== '' && cpf !== '' && phone !== '' && username !== '' && password !== '' && password2 !== ''
         );
     };
 
@@ -71,7 +71,7 @@ function Register() {
                 <div className="md:w-1/2 flex flex-col items-center">
                     <form className="w-full max-w-lg" onSubmit={handleSubmit}>
                         <ProfileUpload handleImageUpload={handleImageUpload}/>
-                        <PersonalData fullName={fullName} setFullName={setFullName} cpf={cpf} setCpf={setCpf} phone={phone} setPhone={setPhone}/>
+                        <PersonalData fullname={fullname} setFullname={setFullname} cpf={cpf} setCpf={setCpf} phone={phone} setPhone={setPhone}/>
                         <LoginData username={username} setUsername={setUsername} password={password} setPassword={setPassword} password2={password2} setPassword2={setPassword2}/>
 
                         <p>{password2 !== password ? 'Passwords do not match' : ''}</p>

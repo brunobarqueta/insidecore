@@ -1,11 +1,14 @@
 import './App.css';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 import Home from './views/home';
-import MainWrapper from './layouts/MainWrapper';
+import ItemRegistration from './views/itemRegistration';
 import Login from './views/login';
-import PrivateRoute from './layouts/PrivateRoute';
 import Logout from './views/logout';
+import MainWrapper from './layouts/MainWrapper';
 import Private from './views/private';
+import PrivateRoute from './layouts/PrivateRoute';
 import Register from './views/register';
 
 function App() {
@@ -25,6 +28,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/logout" element={<Logout />} />
+                    <Route path="/item-registration" element={<ItemRegistration />} />
                 </Routes>
             </MainWrapper>
         </BrowserRouter>
