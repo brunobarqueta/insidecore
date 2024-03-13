@@ -3,9 +3,9 @@ import axios from './axios';
 import jwt_decode from 'jwt-decode';
 import { useAuthStore } from '../store/auth';
 
-export const login = async (username, password) => {
+export const login = async(username, password) => {
     try {
-        const { data, status } = await axios.post('token/', {
+        const { data, status } = await axios.post('api/token/', {
             email: username,
             password,
         });
@@ -13,17 +13,18 @@ export const login = async (username, password) => {
             setAuthUser(data.access, data.refresh);
         }
         return { data, error: null };
+        
     } catch (error) {
         return {
             data: null,
-            error: error.response.data?.detail || 'Something went wrong',
+            error: error.response.data?.detail || 'Something went wrong'
         };
     }
 };
 
-export const register = async (username, password, password2, fullname, cpf, phone) => {
+export const register = async(username, password, password2, fullname, cpf, phone) => {
     try {
-        const { data } = await axios.post('register/', {
+        const { data } = await axios.post('api/register/', {
             email: username,
             password,
             password2,
@@ -47,7 +48,7 @@ export const logout = () => {
     useAuthStore.getState().setUser(null);
 };
 
-export const setUser = async () => {
+export const setUser = async() => {
     // ON PAGE LOAD
     const accessToken = Cookies.get('access_token');
     const refreshToken = Cookies.get('refresh_token');
@@ -81,9 +82,9 @@ export const setAuthUser = (access_token, refresh_token) => {
     useAuthStore.getState().setLoading(false);
 };
 
-export const getRefreshToken = async () => {
+export const getRefreshToken = async() => {
     const refresh_token = Cookies.get('refresh_token');
-    const response = await axios.post('token/refresh/', {
+    const response = await axios.post('api/token/refresh/', {
         refresh: refresh_token,
     });
     return response.data;
