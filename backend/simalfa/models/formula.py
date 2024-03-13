@@ -18,6 +18,11 @@ class FormulaAllPropertiesSerializer(serializers.ModelSerializer):
         tenant_instances = obj.tenants.all()
         return TenantAllPropertiesSerializer(tenant_instances, many=True).data
 
+class FormulaPropertiesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Formula
+        exclude = ['tenants']
+
 class FormulaListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Formula
