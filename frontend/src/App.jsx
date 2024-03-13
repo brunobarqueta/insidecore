@@ -29,6 +29,7 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/item-registration" element={<ItemRegistration />} />
+                    <Route path="/item-registration/:id" element={<ItemRegistration />} />
                 </Routes>
             </MainWrapper>
         </BrowserRouter>

@@ -11,10 +11,10 @@ const LoginData = ({username, setUsername, password, setPassword, password2, set
                 </div>
                 <Input
                     type="text"
-                    name="login"
+                    name="Email"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Login"
+                    placeholder="teste@teste.com"
                 />
             </div>
             <div className="flex space-x-4 mt-4">
