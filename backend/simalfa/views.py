@@ -137,7 +137,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer),
-                'service_item_metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -149,7 +149,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -174,7 +174,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -186,7 +186,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(request_body=ServiceItemGetAlterSerializer, responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -202,7 +202,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -224,7 +224,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def get(self, request, *args, **kwargs):
             queryset = self.filter_queryset(self.get_queryset())
@@ -234,7 +234,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def post(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data)
@@ -257,7 +257,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def get(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -267,7 +267,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(request_body=ServiceItemMetricsGetAlterSerializer, responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def put(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -281,7 +281,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, ServiceItemMetricsPropertiesSerializer),
+                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def patch(self, request, *args, **kwargs):
             instance = self.get_object()

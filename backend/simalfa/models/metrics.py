@@ -7,7 +7,7 @@ class Metrics(EntityCommonAbstract):
     description = models.CharField(max_length=255, blank=False)
     type = models.CharField(max_length=50)
     service = models.CharField(max_length=4000, blank=False)
-    tenants = models.ManyToManyField(Tenant,blank=True)
+    tenants = models.ManyToManyField(Tenant, blank=True)
     
 class MetricsAllPropertiesSerializer(serializers.ModelSerializer):
     tenants = serializers.SerializerMethodField()
