@@ -19,6 +19,11 @@ class MetricsAllPropertiesSerializer(serializers.ModelSerializer):
         tenant_instances = obj.tenants.all()
         return TenantAllPropertiesSerializer(tenant_instances, many=True).data
 
+class MetricsPropertiesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Metrics
+        exclude = ['tenants']
+
 class MetricsListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Metrics
