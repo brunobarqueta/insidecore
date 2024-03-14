@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 import EditIcon from '../assets/edit-icon.svg'
 import { Link } from 'react-router-dom'
+import { Switch } from './ui/switch'
 import TrashIcon from '../assets/trash-icon.svg'
 import { useEffect } from 'react'
 import useItemRegistration from '@/store/itemRegistration'
@@ -23,7 +24,8 @@ const ItemTable = () => {
                 <Table className="mt-8">
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">ID</TableHead>
+                            <TableHead>Ativo</TableHead>
+                            <TableHead className="w-[100px]">Código</TableHead>
                             <TableHead>Descrição</TableHead>
                             <TableHead>Processo</TableHead>
                             {/*<TableHead>Valor</TableHead>*/}
@@ -35,6 +37,9 @@ const ItemTable = () => {
                     <TableBody>
                         {data.map((item) => (
                             <TableRow key={item.id}>
+                                <TableCell>
+                                    <Switch checked={item.active} onClick={() => handleDelete(item.id)}/>
+                                </TableCell>
                                 <TableCell className="font-medium">{item.code}</TableCell>
                                 <TableCell>{item.description}</TableCell>
                                 <TableCell>{item.process}</TableCell>
@@ -43,10 +48,10 @@ const ItemTable = () => {
                                 <TableCell>{item.application}</TableCell>
                                 <TableCell>
                                     <div className="flex gap-2">
-                                        <Link to={`/item-registration/${item.code}`}>
+                                        <Link to={`/item-registration/${item.id}`}>
                                             <img className="cursor-pointer" src={EditIcon} alt="Editar" />
                                         </Link>
-                                        <img onClick={() => handleDelete(item.code)} className="cursor-pointer" src={TrashIcon} alt="Excluir" />
+                                        {/*<img onClick={() => handleDelete(item.id)} className="cursor-pointer" src={TrashIcon} alt="Excluir" />*/}
                                     </div>
                                 </TableCell>
                             </TableRow>

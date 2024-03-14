@@ -5,7 +5,7 @@ import NavBar from '@/components/NavBar'
 import SelectField from '@/components/SelectField'
 import Table from '@/components/Table'
 import Textarea from '@/components/TextArea'
-import useAxios from '../utils/useAxios'
+import useGroup from '@/store/group'
 import useItemRegistration from '@/store/itemRegistration'
 import { useParams } from 'react-router-dom'
 
@@ -26,7 +26,9 @@ const processItems = [
 
 const ItemRegistration = () => {
     const { id } = useParams()
-    const [groups, setGroups] = useState([])
+    const { data, addItem, editItem } = useItemRegistration((state) => state)
+    const { groups, fetchGroups } = useGroup((state) => state)
+    const [isEditMode, setIsEditMode] = useState(false)
     const [formData, setFormData] = useState({
         code: '',
         description: '',
@@ -35,21 +37,10 @@ const ItemRegistration = () => {
         application: '',
     })
 
-    const { data, addItem } = useItemRegistration((state) => state)
-    const api = useAxios()
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await api.get('/simalfa/api/v1/groups/')
-            const updatedGroups = response.data.result.map((group) => ({
-                ...group,
-                code: group.code.toString(),
-            }))
-            setGroups(updatedGroups)
-        }
-        fetchData()
-
-        if (id != undefined) {
-            const itemData = data.find((item) => item.code === id)
+        setIsEditMode(id !== undefined)
+        if (id !== undefined) {
+            const itemData = data.find((item) => item.id === parseInt(id))
             if (itemData) {
                 setFormData(itemData)
             }
@@ -57,30 +48,19 @@ const ItemRegistration = () => {
     }, [id])
 
     useEffect(() => {
-        console.log('formData: ', formData)
-    }, [formData])
+        fetchGroups()
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
-        try {
-            const { result } = await api.post('/simalfa/api/v1/service-item/', {
-                ...formData,
-                code: parseInt(formData.code),
-                formula_fcl: 1,
-                formula_lcl: 1,
-                tenants: [1],
-                metrics: [1],
-            })
-
-            console.log(result)
-        } catch (error) {
-            console.log(error)
-        }
-
         const newItem = { ...formData }
-        addItem(newItem)
-        //setFormData({ code: '', description: '', process: '', rubric: '', application: '' })
+        if (isEditMode) {
+            editItem(newItem)
+        } else {
+            addItem(newItem)
+            setFormData({ code: '', description: '', process: '', rubric: '', application: '' })
+        }
+        
     }
 
     const handleChange = (e) => {
@@ -146,7 +126,7 @@ const ItemRegistration = () => {
                 </div>
                 <div className="float-right">
                     <button className="w-36 mt-4 py-1 text-sm hover:text-gray-700 border border-blue-900 rounded-full bg-blue-900 hover:bg-gray-100 text-white">
-                        {id !== undefined ? 'Salvar' : 'Novo'}
+                        {isEditMode ? 'Salvar' : 'Novo'}
                     </button>
                 </div>
                 <Table />
