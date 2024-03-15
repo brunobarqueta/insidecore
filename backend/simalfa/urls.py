@@ -3,8 +3,7 @@ from simalfa.views import (TenantCrudView,
                            MetricsCrudView,
                            FormulaCrudView,
                            ServiceItemCrudView,
-                           ServiceItemMetricsCrudView,
-                           ServicesCrudView)
+                           ServiceItemMetricsCrudView)
 
 urlpatterns = [
     #metrics
@@ -22,7 +21,4 @@ urlpatterns = [
     #tenants
     path('tenant/', TenantCrudView.TenantGetCreateView.as_view(), name='tenant-get-create'),
     path('tenant/<int:pk>/', TenantCrudView.TenantGetPutView.as_view(), name='tenant-get-put-patch'),
-    #Futures base models
-    path('groups/', ServicesCrudView.GetGroupsView.as_view(), name='groups-get'),
-    path('groups/<int:code_group>/items', ServicesCrudView.GetItensForGroupsView.as_view(), name='groups-items-get'),
 ]
