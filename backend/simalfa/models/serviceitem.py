@@ -4,6 +4,7 @@ from simalfa.models.abstracts import EntityCommonAbstract
 from simalfa.models.tenant import Tenant , TenantAllPropertiesSerializer
 from simalfa.models.formula import Formula, FormulaPropertiesSerializer
 from simalfa.models.serviceitemmetrcs import ServiceItemMetrics , ServiceItemMetricsPropertiesSerializer
+import re
 
 class ServiceItem(EntityCommonAbstract):
     code = models.CharField(max_length=255, blank=False)
@@ -49,7 +50,19 @@ class ServiceItemListCreateSerializer(serializers.ModelSerializer):
         model = ServiceItem
         exclude = ['active']
     
+    def validate(self, attrs):
+        code_is_valid = re.match(r'^\d+(.\d+)*$', attrs['code'])
+        if not code_is_valid:
+            raise serializers.ValidationError({"code": "Código informado não é válido, Por favor, seguir o padrão 'x.x...'."})
+        return attrs
+            
 class ServiceItemGetAlterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceItem
         exclude = ['id']
+    
+    def validate(self, attrs):
+        code_is_valid = re.match(r'^\d+(.\d+)*$', attrs['code'])
+        if not code_is_valid:
+            raise serializers.ValidationError({"code": "Código informado não é válido, Por favor, seguir o padrão 'x.x...'."})
+        return attrs
