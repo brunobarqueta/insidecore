@@ -13,13 +13,13 @@ class ServiceItem(EntityCommonAbstract):
     rubric = models.CharField(max_length=4000, null=True, blank=True)
     application = models.CharField(max_length=4000, null=True, blank=True)
     tenants = models.ManyToManyField(Tenant, blank=True)
-    service_item_metric = models.ForeignKey(ServiceItemMetrics, on_delete=models.SET_NULL, null=True, blank=True)
+    service_item_metrics = models.ManyToManyField(ServiceItemMetrics, blank=True)
     formula_fcl = models.ForeignKey(Formula, related_name='itens_servico_formula_fcl', on_delete=models.SET_NULL, null=True, blank=True)
     formula_lcl = models.ForeignKey(Formula, related_name='itens_servico_formula_lcl', on_delete=models.SET_NULL, null=True, blank=True)
     
 class ServiceItemAllPropertiesSerializer(serializers.ModelSerializer):
     tenants = serializers.SerializerMethodField()
-    service_item_metric = serializers.SerializerMethodField()
+    service_item_metrics = serializers.SerializerMethodField()
     formula_fcl = serializers.SerializerMethodField()
     formula_lcl = serializers.SerializerMethodField()
     class Meta:
@@ -30,10 +30,9 @@ class ServiceItemAllPropertiesSerializer(serializers.ModelSerializer):
         intances = obj.tenants.all()
         return TenantAllPropertiesSerializer(intances, many=True).data
     
-    def get_service_item_metric(self, obj):
-        instance = obj.service_item_metric
-        if instance:
-            return ServiceItemMetricsPropertiesSerializer(instance).data
+    def get_service_item_metrics(self, obj):
+        instance = obj.service_item_metrics.all()
+        return ServiceItemMetricsPropertiesSerializer(instance, many=True).data
     
     def get_formula_fcl(self, obj):
         instance = obj.formula_fcl
@@ -51,7 +50,7 @@ class ServiceItemListCreateSerializer(serializers.ModelSerializer):
         exclude = ['active']
     
     def validate(self, attrs):
-        code_is_valid = re.match(r'^\d+(.\d+)*$', attrs['code'])
+        code_is_valid = re.match(r'^\d+(.\d{1,4}){1,3}$', attrs['code'])
         if not code_is_valid:
             raise serializers.ValidationError({"code": "Código informado não é válido, Por favor, seguir o padrão 'x.x...'."})
         return attrs

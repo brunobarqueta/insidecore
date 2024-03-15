@@ -8,11 +8,11 @@ from simalfa.models.metrics import Metrics, MetricsPropertiesSerializer
 class ServiceItemMetrics(ActiveBaseAbstract):
     value = models.DecimalField(max_digits=25, decimal_places=5)
     tenant = models.ForeignKey(Tenant, null=True, blank=True, on_delete=models.CASCADE)
-    metrics = models.ManyToManyField(Metrics, blank=True)
+    metric = models.ForeignKey(Metrics, null=True, blank=True, on_delete=models.CASCADE)
     
 class ServiceItemMetricsAllPropertiesSerializer(serializers.ModelSerializer):
     tenant = serializers.SerializerMethodField()
-    metrics = serializers.SerializerMethodField()
+    metric = serializers.SerializerMethodField()
     class Meta:
         model = ServiceItemMetrics
         fields = '__all__'
@@ -22,19 +22,21 @@ class ServiceItemMetricsAllPropertiesSerializer(serializers.ModelSerializer):
         if instance:
             return TenantAllPropertiesSerializer(instance).data
     
-    def get_metrics(self, obj):
-        instance = obj.metrics.all()
-        return MetricsPropertiesSerializer(instance, many=True).data
+    def get_metric(self, obj):
+        instance = obj.metric
+        if instance:
+            return MetricsPropertiesSerializer(instance).data
          
 class ServiceItemMetricsPropertiesSerializer(serializers.ModelSerializer):
-    metrics = serializers.SerializerMethodField()
+    metric = serializers.SerializerMethodField()
     class Meta:
         model = ServiceItemMetrics
         exclude = ['tenant']
     
-    def get_metrics(self, obj):
-        instance = obj.metrics.all()
-        return MetricsPropertiesSerializer(instance, many=True).data
+    def get_metric(self, obj):
+        instance = obj.metric
+        if instance:
+            return MetricsPropertiesSerializer(instance).data
 
 class ServiceItemMetricsListCreateSerializer(serializers.ModelSerializer):
     class Meta:

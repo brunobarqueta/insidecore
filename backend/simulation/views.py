@@ -1,13 +1,13 @@
 from rest_framework import generics
 from tools_rest.response_view import success, bad_request
 from simalfa.models.serviceitem import ServiceItem
-from simulation.serializers import GetFilterServiceItemSerializer, ServiceItemOutputSerializer, DescriptionSerializer
+from simulation.serializers import GetFilterServiceItemSerializer, ServiceItemOutputSerializer, DescriptionSerializer, DataServiceInputSerializer
 from simulation.enums import TypeService
 from drf_yasg.utils import swagger_auto_schema
 from tools_rest.swagger_view import SwaggerResultViewModel
 
 # Create your views here.
-class GetServicesItemsForType(generics.ListAPIView):
+class GetServicesItemsForTypeView(generics.ListAPIView):
     queryset = ServiceItem.objects.filter(active=True)
     serializer_class = GetFilterServiceItemSerializer
     
@@ -29,12 +29,12 @@ class GetServicesItemsForType(generics.ListAPIView):
             queryset = queryset.filter(formula_lcl__isnull=False)
         
         result = {}
-        for service_item in queryset.order_by('code'):
+        for service_item in sorted(queryset, key=lambda x: tuple(map(int, x.code.split('.')))):
             code_split = service_item.code.split('.')
             if len(code_split) > 0:
                 code_prefix = code_split[0]
                 descriptions = result.get(code_prefix, [])
-                descriptions.append({'code': service_item.code, 'description': service_item.description})
+                descriptions.append({'code': service_item.code, 'description': service_item.description, 'metrics': service_item.service_item_metrics})
                 result[code_prefix] = descriptions
         
         service_item_data = [{'service': code_group, 'description': result[code_group]} for code_group in result]
@@ -42,3 +42,36 @@ class GetServicesItemsForType(generics.ListAPIView):
         serializer = ServiceItemOutputSerializer(data=service_item_data, many=True)
         if serializer.is_valid():
             return success(serializer.data)
+        
+class GenerateView(generics.CreateAPIView):
+    queryset = ServiceItem.objects.filter(active=True)
+    serializer_class = DataServiceInputSerializer
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            type_service:str = request.data.get('type_service', None)
+            type_service_enum = TypeService[type_service.upper()]
+        except:
+            return bad_request('Tipo de serviço informado é inválido')
+        
+        services_input = request.data.get('services', None)
+        if not services_input:
+            return bad_request("Nenhum serviço foi informado para gerar uma simulação.")
+        
+        if type_service_enum == TypeService.FCL:
+            services = ServiceItem.objects.filter(active=True, formula_fcl__isnull=False)
+        else:
+            services = ServiceItem.objects.filter(active=True, formula_lcl__isnull=False)
+        
+        if not services:
+            return bad_request("Nenhum serviço foi encontrado para gerar uma simulação.")
+        
+        for input in services_input:
+            code = input.get('code', "0")
+            amount = input.get('amount', 0)
+            
+            service = services.filter(code=code).first()
+            if not service:
+                return bad_request('Serviço não foi encontrado.')
+        
+        return success("Success")

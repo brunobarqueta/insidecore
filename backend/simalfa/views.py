@@ -3,10 +3,8 @@ from django.http.response import Http404
 from tools_rest.response_view import success, bad_request
 from tools_rest.swagger_view import SwaggerResultViewModel
 from rest_framework.permissions import IsAuthenticated
-from simalfa.models.service import (Service, ServiceSerializer)
-from simalfa.models.item import (Items, ItemsSerializer)
 from simalfa.models.tenant import (Tenant, TenantAllPropertiesSerializer, TenantListCreateSerializer, TenantGetAlterSerializer)
-from simalfa.models.metrics import (Metrics, MetricsAllPropertiesSerializer, MetricsListCreateSerializer, MetricsGetAlterSerializer)
+from simalfa.models.metrics import (Metrics, MetricsAllPropertiesSerializer, MetricsListCreateSerializer, MetricsGetAlterSerializer, MetricsPropertiesSerializer)
 from simalfa.models.formula import (Formula, FormulaAllPropertiesSerializer, FormulaListCreateSerializer, FormulaGetAlterSerializer, FormulaPropertiesSerializer)
 from simalfa.models.serviceitem import (ServiceItem, ServiceItemAllPropertiesSerializer, ServiceItemListCreateSerializer, ServiceItemGetAlterSerializer)
 from simalfa.models.serviceitemmetrcs import (ServiceItemMetrics, ServiceItemMetricsAllPropertiesSerializer, ServiceItemMetricsListCreateSerializer, ServiceItemMetricsGetAlterSerializer, ServiceItemMetricsPropertiesSerializer)
@@ -136,7 +134,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer),
-                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metrics': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -148,7 +146,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metrics': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -175,7 +173,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metrics': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -187,7 +185,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(request_body=ServiceItemGetAlterSerializer, responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metrics': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -203,7 +201,7 @@ class ServiceItemCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenants': (True, TenantAllPropertiesSerializer), 
-                'service_item_metric': (True, ServiceItemMetricsPropertiesSerializer),
+                'service_item_metrics': (True, ServiceItemMetricsPropertiesSerializer),
                 'formula_fcl':(False, FormulaPropertiesSerializer), 
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
@@ -225,7 +223,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
+                'metric': (False, MetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def get(self, request, *args, **kwargs):
             queryset = self.filter_queryset(self.get_queryset())
@@ -235,7 +233,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
+                'metric': (False, MetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def post(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data)
@@ -258,7 +256,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
+                'metric': (False, MetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def get(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -268,7 +266,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(request_body=ServiceItemMetricsGetAlterSerializer, responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
+                'metric': (False, MetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def put(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -282,7 +280,7 @@ class ServiceItemMetricsCrudView:
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
             {
                 'tenant': (False, TenantAllPropertiesSerializer), 
-                'metrics': (True, ServiceItemMetricsPropertiesSerializer),
+                'metric': (False, MetricsPropertiesSerializer),
             }).openapi}, tags=['admin-service-item-metrics'])
         def patch(self, request, *args, **kwargs):
             instance = self.get_object()
@@ -291,8 +289,6 @@ class ServiceItemMetricsCrudView:
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return success(serializer.data)
-        
-        pass
 
 class TenantCrudView:
     class TenantGetCreateView(generics.ListCreateAPIView):
@@ -347,30 +343,3 @@ class TenantCrudView:
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return success(serializer.data)
-        
-class ServicesCrudView:
-    class GetGroupsView(generics.ListAPIView):
-        queryset = Service().get_defaults_groups()
-        serializer_class = ServiceSerializer
-        permission_classes = [IsAuthenticated]
-        
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceSerializer, True).openapi}, tags=['admin-groups'])
-        def get(self, request, *args, **kwargs):
-            groups = self.get_queryset()
-            serializer = self.serializer_class(groups, many=True)
-            return success(serializer.data)
-    
-    class GetItensForGroupsView(generics.RetrieveAPIView):
-        queryset = Items().get_defaults_items()
-        serializer_class = ItemsSerializer
-        lookup_field = 'code_group'
-        permission_classes = [IsAuthenticated]
-        
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(ItemsSerializer, True).openapi}, tags=['admin-items'])
-        def get(self, request, *args, **kwargs):
-            queryset = self.get_queryset()
-            items = [item for item in queryset if item.code_group == kwargs.get(self.lookup_field)]
-            if not items:
-                raise Http404()
-            serializer = self.serializer_class(items, many=True)
-            return success(serializer.data)

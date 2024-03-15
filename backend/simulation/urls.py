@@ -1,6 +1,7 @@
 from django.urls import path
-from simulation.views import GetServicesItemsForType
+from simulation.views import GetServicesItemsForTypeView, GenerateView
 
 urlpatterns = [
-    path('service-items', GetServicesItemsForType.as_view(), name='service-items-for-type-get'),
+    path('service-items', GetServicesItemsForTypeView.as_view(), name='service-items-for-type-get'),
+    path('generate', GenerateView.as_view(), name='generate-post'),
 ]
