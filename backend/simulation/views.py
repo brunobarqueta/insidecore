@@ -13,7 +13,7 @@ class GetServicesItemsForTypeView(generics.ListAPIView):
     
     @swagger_auto_schema(query_serializer=GetFilterServiceItemSerializer, responses={200: SwaggerResultViewModel(ServiceItemOutputSerializer, True,
     {
-        'description': (True, DescriptionSerializer),
+        'items': (True, DescriptionSerializer),
     }).openapi}, tags=['simulation'])
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -37,7 +37,7 @@ class GetServicesItemsForTypeView(generics.ListAPIView):
                 descriptions.append({'code': service_item.code, 'description': service_item.description, 'metrics': service_item.service_item_metrics})
                 result[code_prefix] = descriptions
         
-        service_item_data = [{'service': code_group, 'description': result[code_group]} for code_group in result]
+        service_item_data = [{'service': code_group, 'items': result[code_group]} for code_group in result]
         
         serializer = ServiceItemOutputSerializer(data=service_item_data, many=True)
         if serializer.is_valid():
