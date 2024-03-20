@@ -9,10 +9,11 @@ class GetFilterServiceItemSerializer(serializers.Serializer):
 class DescriptionSerializer(serializers.Serializer):
     code = serializers.CharField()
     description = serializers.CharField()
-    metrics = serializers.ListField()
+    expression = serializers.CharField()
+    metrics = serializers.SerializerMethodField()
 
     def get_metrics(self, obj):
-        service_item_metrics = ServiceItemMetricsPropertiesSerializer(obj.get('metrics', []), many=True).data
+        service_item_metrics = ServiceItemMetricsPropertiesSerializer(obj.get('metrics', {}), many=True).data
         result = []
         for metric_item in service_item_metrics:
             metric = metric_item.get('metric', {})
@@ -28,12 +29,12 @@ class DescriptionSerializer(serializers.Serializer):
 
 class ServiceItemOutputSerializer(serializers.Serializer):
     service = serializers.CharField()
-    description = serializers.SerializerMethodField()
+    items = serializers.ListField()
     
-    def get_description(self, obj):
+    def get_items(self, obj):
         for item in self.initial_data:
             if item.get('service') == obj.get('service'):
-                return DescriptionSerializer(item.get('description', []), many=True).data
+                return DescriptionSerializer(item.get('items', []), many=True).data
             
 class ServiceItemInputSerializer(serializers.Serializer):
     code = serializers.CharField(required=True)
@@ -45,7 +46,7 @@ class DataServiceInputSerializer(serializers.Serializer):
     client_name = serializers.CharField(required=True)
     telephone = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    cif = serializers.CharField(required=True)
+    cif = serializers.DecimalField(max_digits=25, decimal_places=5, required=True)
     data_entrada = serializers.DateTimeField(required=False, allow_null=True)
     data_saida = serializers.DateTimeField(required=False, allow_null=True)
     services = ServiceItemInputSerializer(many=True)
