@@ -13,7 +13,7 @@ const SelectField = ({ ...props }) => {
                 <SelectContent>
                     <SelectGroup>
                         {props.items && props.items.map(item => {
-                            return <SelectItem value={item.code} key={item.code}>{item.name}</SelectItem>
+                            return <SelectItem value={item.id} key={item.id}>{item.description}</SelectItem>
                         })}
                     </SelectGroup>
                 </SelectContent>
