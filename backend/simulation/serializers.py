@@ -9,6 +9,7 @@ class GetFilterServiceItemSerializer(serializers.Serializer):
 class DescriptionSerializer(serializers.Serializer):
     code = serializers.CharField()
     description = serializers.CharField()
+    expression = serializers.CharField()
     metrics = serializers.SerializerMethodField()
 
     def get_metrics(self, obj):
@@ -28,7 +29,7 @@ class DescriptionSerializer(serializers.Serializer):
 
 class ServiceItemOutputSerializer(serializers.Serializer):
     service = serializers.CharField()
-    items = serializers.SerializerMethodField()
+    items = serializers.ListField()
     
     def get_items(self, obj):
         for item in self.initial_data:
@@ -45,7 +46,7 @@ class DataServiceInputSerializer(serializers.Serializer):
     client_name = serializers.CharField(required=True)
     telephone = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    cif = serializers.CharField(required=True)
+    cif = serializers.DecimalField(max_digits=25, decimal_places=5, required=True)
     data_entrada = serializers.DateTimeField(required=False, allow_null=True)
     data_saida = serializers.DateTimeField(required=False, allow_null=True)
     services = ServiceItemInputSerializer(many=True)

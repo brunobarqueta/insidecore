@@ -17,16 +17,19 @@ def create_defaults(sender, **kwargs):
     
             if DEBUG:
                 if not Metrics.objects.exists():
-                    metric_cif = Metrics.objects.create(description='valor_cif', type='str', service='mock metrics srv')
+                    metric_cif = Metrics.objects.create(description='valor_cif', type='decimal', service='vc')
                     metric_cif.tenants.set([tenant])
-                    metric_nd = Metrics.objects.create(description='numero dias', type='str', service='mock metrics srv')
+                    metric_nd = Metrics.objects.create(description='numero_dias', type='decimal', service='nd')
                     metric_nd.tenants.set([tenant])
-                    metric_ts = Metrics.objects.create(description='taxa serviço', type='str', service='mock metrics srv')
+                    metric_ts = Metrics.objects.create(description='taxa_serviço', type='decimal', service='ts')
                     metric_ts.tenants.set([tenant])
     
                 if not Formula.objects.exists():
-                    formula_fcl = Formula.objects.create(description='mock formula_fcl desc', expression='não sei mock fcl')
+                    formula_fcl = Formula.objects.create(description='mock formula_fcl desc', expression='vc * nd')
                     formula_fcl.tenants.set([tenant])
-                    formula_lcl = Formula.objects.create(description='mock formula_lcl desc', expression='não sei mock lcl')
+                    formula_fcl.metrics.set([metric_cif, metric_nd])
+                    
+                    formula_lcl = Formula.objects.create(description='mock formula_lcl desc', expression='ts * qtde')
                     formula_lcl.tenants.set([tenant])
+                    formula_lcl.metrics.set([metric_ts])
         
