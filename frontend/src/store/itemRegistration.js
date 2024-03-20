@@ -10,7 +10,6 @@ const useItemRegistrationStore = create((set, get) => ({
         try {
             const response = await api.post('/simalfa/api/v1/service-item/', {
                 ...item,
-                code: parseInt(item.code),
                 formula_fcl: 1,
                 formula_lcl: 1,
                 tenants: [1],
@@ -45,15 +44,13 @@ const useItemRegistrationStore = create((set, get) => ({
         try {
             const { data } = await api.get('/simalfa/api/v1/service-item')
             const { result } = data
-            //this one works with the api >>>>>
             set(() => ({ data: result.sort((a, b) => a.id - b.id) }))
-                //set(() => ({ result }))
         } catch (error) {
             console.error('Error fetching items:', error)
         }
     },
     editItem: async(formData) => {
-        const { api, data } = get()
+        const { api } = get()
         try {
             const response = await api.put(`/simalfa/api/v1/service-item/${formData.id}/`, {
                 ...formData,

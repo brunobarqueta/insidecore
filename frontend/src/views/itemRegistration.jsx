@@ -1,26 +1,29 @@
 import { useEffect, useState } from 'react'
 
 import Input from '@/components/Input'
+import MaskInput from '@/components/MaskInput'
 import NavBar from '@/components/NavBar'
 import SelectField from '@/components/SelectField'
 import Table from '@/components/Table'
+import Table2 from '@/components/Table2'
 import Textarea from '@/components/TextArea'
+import useFormulaStore from '@/store/formula'
 import useGroup from '@/store/group'
 import useItemRegistration from '@/store/itemRegistration'
 import { useParams } from 'react-router-dom'
 
 const processItems = [
     {
-        code: 'test',
-        name: 'Test',
+        id: 'test',
+        description: 'Test',
     },
     {
-        code: 'test2',
-        name: 'Test 2',
+        id: 'test2',
+        description: 'Test 2',
     },
     {
-        code: 'test3',
-        name: 'Test 3',
+        id: 'test3',
+        description: 'Test 3',
     },
 ]
 
@@ -28,6 +31,7 @@ const ItemRegistration = () => {
     const { id } = useParams()
     const { data, addItem, editItem } = useItemRegistration((state) => state)
     const { groups, fetchGroups } = useGroup((state) => state)
+    const { formulas, fetchFormulas } = useFormulaStore((state) => state)
     const [isEditMode, setIsEditMode] = useState(false)
     const [formData, setFormData] = useState({
         code: '',
@@ -35,6 +39,8 @@ const ItemRegistration = () => {
         process: '',
         rubric: '',
         application: '',
+        formula_fcl: '',
+        formula_lcl: '',
     })
 
     useEffect(() => {
@@ -48,17 +54,24 @@ const ItemRegistration = () => {
     }, [id])
 
     useEffect(() => {
-        fetchGroups()
+        //fetchGroups()
+        fetchFormulas()
+        console.log(formulas)
     }, [])
+
+    useEffect(() => {
+        console.log(formData)
+    }, [formData])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         const newItem = { ...formData }
+        console.log(newItem)
         if (isEditMode) {
             editItem(newItem)
         } else {
             addItem(newItem)
-            setFormData({ code: '', description: '', process: '', rubric: '', application: '' })
+            //setFormData({ code: '', description: '', process: '', rubric: '', application: '' })
         }
         
     }
@@ -77,15 +90,21 @@ const ItemRegistration = () => {
             <NavBar />
             <form className="mt-4 px-32 py-32" onSubmit={handleSubmit}>
                 <div className="flex gap-8">
-                    <SelectField
-                        handleSelectChange={handleSelectChange}
-                        name="code"
-                        label={'Grupo'}
-                        items={groups}
-                        placeholder={'Selecione'}
-                        width={'min-w-[200px]'}
-                        value={formData.code}
-                    />
+                    <div>
+                        <div className="mb-2">
+                            <label>Código</label>
+                        </div>
+                        <MaskInput
+                            className="border border-gray-300 w-[300px]"
+                            mask="9.999.999.999" 
+                            type="text"
+                            name="code"
+                            value={formData.code}
+                            onChange={handleChange}
+                            placeholder="X.XXX.XXX.XXX"
+                            fixedBg={true}
+                        />
+                    </div>
                     <div>
                         <div className="mb-2">
                             <label>Descrição</label>
@@ -109,6 +128,27 @@ const ItemRegistration = () => {
                         width={'min-w-[200px]'}
                         value={formData.process}
                     />
+                    <SelectField
+                        handleSelectChange={handleSelectChange}
+                        name="formula_fcl"
+                        label={'Formula FCL'}
+                        items={formulas}
+                        placeholder={'Selecione'}
+                        width={'min-w-[200px]'}
+                        value={formData.formula_fcl}
+                    />
+                    <SelectField
+                        handleSelectChange={handleSelectChange}
+                        name="formula_lcl"
+                        label={'Formula LCL'}
+                        items={formulas}
+                        placeholder={'Selecione'}
+                        width={'min-w-[200px]'}
+                        value={formData.formula_lcl}
+                    />
+                </div>
+                <div className="w-1/3">
+                    <Table2 />
                 </div>
                 <div className="flex gap-8 mt-8">
                     <div className="w-3/5">
@@ -129,7 +169,10 @@ const ItemRegistration = () => {
                         {isEditMode ? 'Salvar' : 'Novo'}
                     </button>
                 </div>
-                <Table />
+                <Table 
+                    tableHeads={['Ativo', 'Código', 'Descrição', 'Processo', 'Rúbrica', 'Aplicação']}
+
+                />
             </form>
         </div>
     )
