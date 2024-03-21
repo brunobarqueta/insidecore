@@ -10,23 +10,6 @@ class ServiceItemMetrics(ActiveBaseAbstract):
     tenant = models.ForeignKey(Tenant, null=True, blank=True, on_delete=models.CASCADE)
     metric = models.ForeignKey(Metrics, null=True, blank=True, on_delete=models.CASCADE)
     
-class ServiceItemMetricsAllPropertiesSerializer(serializers.ModelSerializer):
-    tenant = serializers.SerializerMethodField()
-    metric = serializers.SerializerMethodField()
-    class Meta:
-        model = ServiceItemMetrics
-        fields = '__all__'
-    
-    def get_tenant(self, obj):
-        instance = obj.tenant
-        if instance:
-            return TenantAllPropertiesSerializer(instance).data
-    
-    def get_metric(self, obj):
-        instance = obj.metric
-        if instance:
-            return MetricsPropertiesSerializer(instance).data
-         
 class ServiceItemMetricsPropertiesSerializer(serializers.ModelSerializer):
     metric = serializers.SerializerMethodField()
     class Meta:
@@ -42,8 +25,3 @@ class ServiceItemMetricsListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceItemMetrics
         exclude = ['active']
-    
-class ServiceItemMetricsGetAlterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServiceItemMetrics
-        exclude = ['id']
