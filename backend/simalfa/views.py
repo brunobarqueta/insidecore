@@ -1,13 +1,12 @@
 from rest_framework import generics
-from django.http.response import Http404
 from tools_rest.response_view import success, bad_request
 from tools_rest.swagger_view import SwaggerResultViewModel
 from rest_framework.permissions import IsAuthenticated
 from simalfa.models.tenant import (Tenant, TenantAllPropertiesSerializer, TenantListCreateSerializer, TenantGetAlterSerializer)
 from simalfa.models.metrics import (Metrics, MetricsAllPropertiesSerializer, MetricsListCreateSerializer, MetricsGetAlterSerializer, MetricsPropertiesSerializer)
 from simalfa.models.formula import (Formula, FormulaAllPropertiesSerializer, FormulaListCreateSerializer, FormulaGetAlterSerializer, FormulaPropertiesSerializer)
-from simalfa.models.serviceitem import (ServiceItem, ServiceItemAllPropertiesSerializer, ServiceItemCreateInputSerializer, ServiceItemCreateSerializer, ServiceItemGetAlterSerializer)
-from simalfa.models.serviceitemmetrcs import (ServiceItemMetrics, ServiceItemMetricsAllPropertiesSerializer, ServiceItemMetricsListCreateSerializer, ServiceItemMetricsGetAlterSerializer, ServiceItemMetricsPropertiesSerializer)
+from simalfa.models.serviceitem import (ServiceItem, ServiceItemAllPropertiesSerializer, ServiceItemCreateInputSerializer, ServiceItemCreateSerializer, ServiceItemGetAlterSerializer, ServiceItemGetAlterInputSerializer)
+from simalfa.models.serviceitemmetrcs import (ServiceItemMetrics, ServiceItemMetricsListCreateSerializer, ServiceItemMetricsPropertiesSerializer)
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
         
@@ -17,13 +16,13 @@ class MetricsCrudView:
         serializer_class = MetricsListCreateSerializer
         permission_classes = [IsAuthenticated]
         
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, True, {'tenants': (True, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
+        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, True, {'tenant': (False, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
         def get(self, request, *args, **kwargs):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = MetricsAllPropertiesSerializer(queryset, many=True)
             return success(serializer.data)
         
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenants': (True, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
+        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenant': (False, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
         def post(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
@@ -42,13 +41,13 @@ class MetricsCrudView:
             else:
                 return MetricsGetAlterSerializer
     
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenants': (True, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
+        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenant': (False, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
         def get(self, request, *args, **kwargs):
             instance = self.get_object()
             serializer = MetricsAllPropertiesSerializer(instance)
             return success(serializer.data)
 
-        @swagger_auto_schema(request_body=MetricsGetAlterSerializer,responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenants': (True, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
+        @swagger_auto_schema(request_body=MetricsGetAlterSerializer,responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenant': (False, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
         def put(self, request, *args, **kwargs):
             instance = self.get_object()
             serializer = self.get_serializer(instance, data=request.data)
@@ -58,11 +57,17 @@ class MetricsCrudView:
                 retorno.is_valid(raise_exception=True)
                 return success(retorno.data)
     
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenants': (True, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
+        @swagger_auto_schema(responses={200: SwaggerResultViewModel(MetricsAllPropertiesSerializer, methodField={'tenant': (False, TenantAllPropertiesSerializer)}).openapi}, tags=['admin-metrics'])
         def patch(self, request, *args, **kwargs):
             instance = self.get_object()
             instance.alter_active_situation()
             
+            if not instance.active:
+                Formula.objects.filter(active=True, metrics=instance.id).update(active=False)
+                service_item_metrics = ServiceItemMetrics.objects.filter(active=True, metric=instance.id)
+                ServiceItem.objects.filter(active=True, service_item_metrics__in=service_item_metrics).update(active=False)
+                service_item_metrics.update(active=False)
+                
             serializer = MetricsAllPropertiesSerializer(instance, data=instance.__dict__, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
@@ -76,7 +81,7 @@ class FormulaCrudView:
         
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(FormulaAllPropertiesSerializer, True, methodField=
         {
-            'tenants': (True, TenantAllPropertiesSerializer),
+            'tenant': (False, TenantAllPropertiesSerializer),
             'metrics': (True, MetricsPropertiesSerializer)
         }).openapi}, tags=['admin-formulas'])
         def get(self, request, *args, **kwargs):
@@ -86,7 +91,7 @@ class FormulaCrudView:
         
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(FormulaAllPropertiesSerializer, methodField=
         {
-            'tenants': (True, TenantAllPropertiesSerializer),
+            'tenant': (False, TenantAllPropertiesSerializer),
             'metrics': (True, MetricsPropertiesSerializer)
         }).openapi}, tags=['admin-formulas'])
         def post(self, request, *args, **kwargs):
@@ -109,7 +114,7 @@ class FormulaCrudView:
     
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(FormulaAllPropertiesSerializer, methodField=
         {
-            'tenants': (True, TenantAllPropertiesSerializer),
+            'tenant': (False, TenantAllPropertiesSerializer),
             'metrics': (True, MetricsPropertiesSerializer)
         }).openapi}, tags=['admin-formulas'])
         def get(self, request, *args, **kwargs):
@@ -119,7 +124,7 @@ class FormulaCrudView:
 
         @swagger_auto_schema(request_body=FormulaGetAlterSerializer,responses={200: SwaggerResultViewModel(FormulaAllPropertiesSerializer, methodField=
         {
-            'tenants': (True, TenantAllPropertiesSerializer),
+            'tenant': (False, TenantAllPropertiesSerializer),
             'metrics': (True, MetricsPropertiesSerializer)
         }).openapi}, tags=['admin-formulas'])
         def put(self, request, *args, **kwargs):
@@ -133,7 +138,7 @@ class FormulaCrudView:
     
         @swagger_auto_schema(responses={200: SwaggerResultViewModel(FormulaAllPropertiesSerializer, methodField=
         {
-            'tenants': (True, TenantAllPropertiesSerializer),
+            'tenant': (False, TenantAllPropertiesSerializer),
             'metrics': (True, MetricsPropertiesSerializer)
         }).openapi}, tags=['admin-formulas'])
         def patch(self, request, *args, **kwargs):
@@ -171,11 +176,8 @@ class ServiceItemCrudView:
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
         def post(self, request, *args, **kwargs):
-            try:
-                tenant = Tenant.objects.get(pk=request.data.get('tenant', None))
-            except:
-                return bad_request('EMpresa informada não foi encontrada.')
-                
+            serializer = ServiceItemCreateSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
             
             if ServiceItem.objects.filter(code=request.data.get('code')).exists():
                 return bad_request('Código informado ja é utilizado')
@@ -191,7 +193,7 @@ class ServiceItemCrudView:
                 data = {
                     'value': metric.get('value', '0'),
                     'metric': metric_instance.id,
-                    'tenant': tenant.id
+                    'tenant': request.data.get('tenant', None)
                 }
                 metrics.append(data)
             
@@ -211,7 +213,7 @@ class ServiceItemCrudView:
         
     class ServiceItemGetAlterView(generics.RetrieveUpdateAPIView):
         queryset = ServiceItem.objects.all()
-        serializer_class = ServiceItemGetAlterSerializer
+        serializer_class = ServiceItemGetAlterInputSerializer
         permission_classes = [IsAuthenticated]
             
         def get_serializer_class(self):
@@ -232,7 +234,7 @@ class ServiceItemCrudView:
             serializer = ServiceItemAllPropertiesSerializer(instance)
             return success(serializer.data)
 
-        @swagger_auto_schema(request_body=ServiceItemGetAlterSerializer, responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
+        @swagger_auto_schema(request_body=ServiceItemGetAlterInputSerializer, responses={200: SwaggerResultViewModel(ServiceItemAllPropertiesSerializer, True, 
             {
                 'tenant': (False, TenantAllPropertiesSerializer),
                 'service_item_metrics': (True, ServiceItemMetricsPropertiesSerializer),
@@ -240,8 +242,45 @@ class ServiceItemCrudView:
                 'formula_lcl':(False, FormulaPropertiesSerializer)
             }).openapi}, tags=['admin-service-items'])
         def put(self, request, *args, **kwargs):
+            serializer = ServiceItemGetAlterSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data)
+            code = request.data['code']
+            if instance.code != code and ServiceItem.objects.filter(code=code):
+                return bad_request(f"Código '{code}' ja esta sendo utilizado.")
+            
+            serializer_list = []
+            for metric in request.data.get('metrics'):
+                id_item_service_metric = metric.get('id_service_item_metric', None)
+                id_metric = metric.get('id_metric', None)
+                value = metric.get('value', '0')
+                
+                try:
+                    if id_item_service_metric == 0:
+                        service_metrics = ServiceItemMetrics(value=value)
+                        service_metrics.save()
+                    else:
+                        service_metrics = instance.service_item_metrics.get(pk=id_item_service_metric)
+                except:
+                    return bad_request(f'Metrica do item serviço de identificador {id_item_service_metric} não encontrada.')
+                
+                data = {
+                    'value': value,
+                    'metric': id_metric,
+                    'tenant': request.data.get('tenant', instance.tenant)
+                }
+                serializer = ServiceItemMetricsListCreateSerializer(service_metrics, data=data)
+                serializer.is_valid(raise_exception=True)
+                serializer_list.append(serializer)
+            
+            ids_service_item_metrics = []
+            for serializer_item in serializer_list:
+                serializer_item.save()
+                ids_service_item_metrics.append(serializer_item.data['id'])
+                
+            request.data['service_item_metrics'] = ids_service_item_metrics
+            serializer = ServiceItemGetAlterSerializer(instance, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 self.perform_update(serializer)
                 retorno = ServiceItemAllPropertiesSerializer(instance, data=request.data)
@@ -260,82 +299,6 @@ class ServiceItemCrudView:
             instance.alter_active_situation()
             
             serializer = ServiceItemAllPropertiesSerializer(instance, data=instance.__dict__, partial=True)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                return success(serializer.data)
-
-class ServiceItemMetricsCrudView:
-    class ServiceItemMetricsGetPostView(generics.ListCreateAPIView):
-        queryset = ServiceItemMetrics.objects.all()
-        serializer_class = ServiceItemMetricsListCreateSerializer
-        permission_classes = [IsAuthenticated]
-        
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
-            {
-                'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, MetricsPropertiesSerializer),
-            }).openapi}, tags=['admin-service-item-metrics'])
-        def get(self, request, *args, **kwargs):
-            queryset = self.filter_queryset(self.get_queryset())
-            serializer = ServiceItemMetricsAllPropertiesSerializer(queryset, many=True)
-            return success(serializer.data)
-        
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
-            {
-                'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, MetricsPropertiesSerializer),
-            }).openapi}, tags=['admin-service-item-metrics'])
-        def post(self, request, *args, **kwargs):
-            serializer = self.get_serializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                instance = serializer.save()
-                instance_serializer = ServiceItemMetricsAllPropertiesSerializer(instance)
-                return success(instance_serializer.data)
-    
-    class ServiceItemMetricsGetPutPatchView(generics.RetrieveUpdateAPIView):
-        queryset = ServiceItemMetrics.objects.all()
-        serializer_class = ServiceItemMetricsGetAlterSerializer
-        permission_classes = [IsAuthenticated]
-            
-        def get_serializer_class(self):
-            if self.request.method in ['GET', 'PATCH']:
-                return None
-            else:
-                return ServiceItemMetricsGetAlterSerializer
-            
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
-            {
-                'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, MetricsPropertiesSerializer),
-            }).openapi}, tags=['admin-service-item-metrics'])
-        def get(self, request, *args, **kwargs):
-            instance = self.get_object()
-            serializer = ServiceItemMetricsAllPropertiesSerializer(instance)
-            return success(serializer.data)
-        
-        @swagger_auto_schema(request_body=ServiceItemMetricsGetAlterSerializer, responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
-            {
-                'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, MetricsPropertiesSerializer),
-            }).openapi}, tags=['admin-service-item-metrics'])
-        def put(self, request, *args, **kwargs):
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                self.perform_update(serializer)
-                retorno = ServiceItemMetricsAllPropertiesSerializer(instance, data=request.data)
-                retorno.is_valid(raise_exception=True)
-                return success(retorno.data)
-        
-        @swagger_auto_schema(responses={200: SwaggerResultViewModel(ServiceItemMetricsAllPropertiesSerializer, True,
-            {
-                'tenant': (False, TenantAllPropertiesSerializer), 
-                'metric': (False, MetricsPropertiesSerializer),
-            }).openapi}, tags=['admin-service-item-metrics'])
-        def patch(self, request, *args, **kwargs):
-            instance = self.get_object()
-            instance.alter_active_situation()
-            serializer = ServiceItemMetricsAllPropertiesSerializer(instance, data=instance.__dict__, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return success(serializer.data)
@@ -389,6 +352,12 @@ class TenantCrudView:
             instance = self.get_object()
             instance.alter_active_situation()
             
+            if not instance.active:
+                ServiceItem.objects.filter(active=True, tenant= instance.id).update(active=False)
+                ServiceItemMetrics.objects.filter(active=True, tenant= instance.id).update(active=False)
+                Formula.objects.filter(active=True, tenant=instance.id).update(active=False)
+                Metrics.objects.filter(active=True, tenant= instance.id).update(active=False)
+                
             serializer = TenantAllPropertiesSerializer(instance, data=instance.__dict__, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()

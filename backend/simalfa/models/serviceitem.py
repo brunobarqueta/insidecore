@@ -44,7 +44,24 @@ class ServiceItemAllPropertiesSerializer(serializers.ModelSerializer):
         instance = obj.formula_lcl
         if instance:
             return FormulaPropertiesSerializer(instance).data
-            
+
+class ServiceItemMetricsUpdateerializer(serializers.Serializer):
+    id_service_item_metric = serializers.IntegerField(required=True)
+    id_metric = serializers.IntegerField(required=True)
+    value = serializers.DecimalField(required=True, max_digits=25, decimal_places=5)
+
+class ServiceItemGetAlterInputSerializer(serializers.ModelSerializer):
+    metrics = ServiceItemMetricsUpdateerializer(many=True, required=False)
+    class Meta:
+        model = ServiceItem
+        exclude = ['id', 'service_item_metrics']
+    
+    def validate(self, attrs):
+        code_is_valid = re.match(r'^\d+(.\d+)*$', attrs['code'])
+        if not code_is_valid:
+            raise serializers.ValidationError({"code": "Código informado não é válido, Por favor, seguir o padrão 'x.x...'."})
+        return attrs
+
 class ServiceItemGetAlterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceItem
