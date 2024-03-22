@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from simulation.enums import TypeService
-from simalfa.models.serviceitemmetrcs import ServiceItemMetricsPropertiesSerializer, ServiceItemMetrics
+from simalfa.models.serviceitemmetrcs import ServiceItemMetricsPropertiesSerializer
 
 #class GetFilterServiceItemSerializer(serializers.ModelSerializer):
 class GetFilterServiceItemSerializer(serializers.Serializer):
@@ -9,7 +9,6 @@ class GetFilterServiceItemSerializer(serializers.Serializer):
 class DescriptionSerializer(serializers.Serializer):
     code = serializers.CharField()
     description = serializers.CharField()
-    expression = serializers.CharField()
     metrics = serializers.SerializerMethodField()
 
     def get_metrics(self, obj):
@@ -35,10 +34,14 @@ class ServiceItemOutputSerializer(serializers.Serializer):
         for item in self.initial_data:
             if item.get('service') == obj.get('service'):
                 return DescriptionSerializer(item.get('items', []), many=True).data
-            
+
+class ServiceItemMetricsInputSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    value = serializers.DecimalField(max_digits=25, decimal_places=5, required=True)
+     
 class ServiceItemInputSerializer(serializers.Serializer):
     code = serializers.CharField(required=True)
-    amount = serializers.IntegerField(required=True)
+    metrics = ServiceItemMetricsInputSerializer(many=True, required=True)
     
 class DataServiceInputSerializer(serializers.Serializer):
     type_service = serializers.ChoiceField(choices=[(tag.value, tag.name) for tag in TypeService])
@@ -50,6 +53,3 @@ class DataServiceInputSerializer(serializers.Serializer):
     data_entrada = serializers.DateTimeField(required=False, allow_null=True)
     data_saida = serializers.DateTimeField(required=False, allow_null=True)
     services = ServiceItemInputSerializer(many=True)
-    
-    
-    

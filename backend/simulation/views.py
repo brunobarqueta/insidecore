@@ -3,8 +3,12 @@ from tools_rest.response_view import success, bad_request
 from simalfa.models.serviceitem import ServiceItem
 from simulation.serializers import GetFilterServiceItemSerializer, ServiceItemOutputSerializer, DescriptionSerializer, DataServiceInputSerializer
 from simulation.enums import TypeService
+from simalfa.enums import TypeMetric
 from drf_yasg.utils import swagger_auto_schema
 from tools_rest.swagger_view import SwaggerResultViewModel
+
+import random
+from decimal import Decimal
 
 # Create your views here.
 class GetServicesItemsForTypeView(generics.ListAPIView):
@@ -41,9 +45,9 @@ class GetServicesItemsForTypeView(generics.ListAPIView):
                 metrics = []
                 for serv_item_metric in service_item.service_item_metrics.all():
                     try:
-                        if formula.metrics.get(pk=serv_item_metric.metric_id):
+                        if formula.metrics.filter(pk=serv_item_metric.metric_id).exclude(type=TypeMetric.IMUTAVEL).first():
                             metric = {
-                                "description": serv_item_metric.metric.description,
+                                "id": serv_item_metric.metric.id,
                                 "type": serv_item_metric.metric.type,
                                 "service": serv_item_metric.metric.service,
                                 "value": serv_item_metric.value
@@ -52,7 +56,7 @@ class GetServicesItemsForTypeView(generics.ListAPIView):
                     except:
                         continue            
                 descriptions = result.get(code_prefix, [])
-                descriptions.append({'code': service_item.code, 'expression': formula.expression, 'description': service_item.description, 'metrics': metrics})
+                descriptions.append({'code': service_item.code, 'description': service_item.description, 'metrics': metrics})
                 result[code_prefix] = descriptions
         
         service_item_data = [{'service': code_group, 'items': result[code_group]} for code_group in result]
@@ -66,6 +70,10 @@ class GenerateView(generics.CreateAPIView):
     serializer_class = DataServiceInputSerializer
     
     def post(self, request, *args, **kwargs):
+        #Validar entradas.
+        #tt = DataServiceInputSerializer(data=request.data)
+        #tt.is_valid(raise_exception=True)
+        
         try:
             type_service:str = request.data.get('type_service', None)
             type_service_enum = TypeService[type_service.upper()]
@@ -84,12 +92,20 @@ class GenerateView(generics.CreateAPIView):
         if not services:
             return bad_request("Nenhum serviço foi encontrado para gerar uma simulação.")
         
+        list = []
         for input in services_input:
+            random_decimal = round(random.uniform(10.0, 1000.0), 5)
             code = input.get('code', "0")
-            amount = input.get('amount', 0)
+            data = {
+                'code': code,
+                'description': 'mock description',
+                'value': random_decimal
+            }
+            list.append(data)
             
-            service = services.filter(code=code).first()
-            if not service:
-                return bad_request('Serviço não foi encontrado.')
+            #amount = input.get('amount', 0)
+            #service = services.filter(code=code).first()
+            #if not service:
+            #    return bad_request('Serviço não foi encontrado.')
         
-        return success("Success")
+        return success(list)

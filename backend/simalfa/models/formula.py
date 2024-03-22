@@ -8,18 +8,18 @@ class Formula(EntityCommonAbstract):
     description = models.CharField(max_length=255, blank=False)
     expression = models.CharField(max_length=4000, blank=False)
     metrics = models.ManyToManyField(Metrics,blank=True)
-    tenants = models.ManyToManyField(Tenant,blank=True)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     
 class FormulaAllPropertiesSerializer(serializers.ModelSerializer):
-    tenants = serializers.SerializerMethodField()
+    tenant = serializers.SerializerMethodField()
     metrics = serializers.SerializerMethodField()
     class Meta:
         model = Formula
         fields = '__all__'
         
-    def get_tenants(self, obj):
-        tenant_instances = obj.tenants.all()
-        return TenantAllPropertiesSerializer(tenant_instances, many=True).data
+    def get_tenant(self, obj):
+        tenant_instance = obj.tenant
+        return TenantAllPropertiesSerializer(tenant_instance).data
         
     def get_metrics(self, obj):
         metric_instances = obj.metrics.all()
@@ -28,7 +28,7 @@ class FormulaAllPropertiesSerializer(serializers.ModelSerializer):
 class FormulaPropertiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Formula
-        exclude = ['tenants', 'metrics']
+        exclude = ['tenant', 'metrics']
         
     def get_metrics(self, obj):
         metric_instances = obj.metrics.all()
