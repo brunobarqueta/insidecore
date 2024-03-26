@@ -6,6 +6,7 @@
 *.vdcode/
 .vscode
 *.vdcode
+staticfiles/
 
 ### Django ###
 *.log
