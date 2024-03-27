@@ -1,6 +1,6 @@
 from enum import Enum
 
-class TypeService(Enum):
-    FCL = 1
-    LCL = 2
-    BOTH = 3
+class TypeMetric(Enum):
+    CABECALHO = 'C'
+    SIMULACAO = 'S'
+    IMUTAVEL = 'I'

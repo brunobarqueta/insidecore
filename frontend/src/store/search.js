@@ -1,10 +1,9 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 const useSearchStore = create((set) => ({
     searchText: '',
     setSearchText: (text) => set({ searchText: text }),
-    items: [
-        {
+    items: [{
             title: 'Dashboard de visualização financeira',
             date: '20/20/2023',
         },

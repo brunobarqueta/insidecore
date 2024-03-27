@@ -71,3 +71,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         
         return user
+
+class ResponseRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('email' ,'fullname')
+
+class TokenReponseSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+    
+    class Meta:
+        fields = '__all__'

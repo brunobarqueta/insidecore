@@ -1,101 +1,90 @@
-import Input from '@/components/Input';
-import MaskInput from '@/components/MaskInput';
-import NavBar from '@/components/NavBar';
-import SelectField from '@/components/SelectField';
-import Table from '@/components/Table';
-import Textarea from '@/components/TextArea';
-import useItemRegistration from '@/store/itemRegistration';
-import { useState } from 'react';
+import { useEffect, useState } from 'react'
+
+import Input from '@/components/Input'
+import NavBar from '@/components/NavBar'
+import SelectField from '@/components/SelectField'
+import Table from '@/components/Table'
+import Textarea from '@/components/TextArea'
+import useGroup from '@/store/group'
+import useItemRegistration from '@/store/itemRegistration'
+import { useParams } from 'react-router-dom'
 
 const processItems = [
     {
-        value: 'test',
-        text: 'Test',
+        code: 'test',
+        name: 'Test',
     },
     {
-        value: 'test2',
-        text: 'Test 2',
+        code: 'test2',
+        name: 'Test 2',
     },
     {
-        value: 'test3',
-        text: 'Test 3',
+        code: 'test3',
+        name: 'Test 3',
     },
-];
-
-const groupItems = [
-    {
-        value: '1',
-        text: '1',
-    },
-    {
-        value: '2',
-        text: '2',
-    },
-    {
-        value: '3',
-        text: '3',
-    },
-];
+]
 
 const ItemRegistration = () => {
+    const { id } = useParams()
+    const { data, addItem, editItem } = useItemRegistration((state) => state)
+    const { groups, fetchGroups } = useGroup((state) => state)
+    const [isEditMode, setIsEditMode] = useState(false)
     const [formData, setFormData] = useState({
-        grupo: '',
-        item: '',
-        subItem: '',
-        descricao: '',
-        processo: '',
-        valor: '',
-        rubrica: '',
-        aplicacao: '',
-    });
+        code: '',
+        description: '',
+        process: '',
+        rubric: '',
+        application: '',
+    })
 
-    const setItemRegistration = useItemRegistration((state) => state.addItem);
+    useEffect(() => {
+        setIsEditMode(id !== undefined)
+        if (id !== undefined) {
+            const itemData = data.find((item) => item.id === parseInt(id))
+            if (itemData) {
+                setFormData(itemData)
+            }
+        }
+    }, [id])
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const newItem = { ...formData };
-        setItemRegistration(newItem);
-        setFormData({ grupo: '', item: '', subItem: '', descricao: '', processo: '', valor: '', rubrica: '', aplicacao: '' });
-    };
+    useEffect(() => {
+        fetchGroups()
+    }, [])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const newItem = { ...formData }
+        if (isEditMode) {
+            editItem(newItem)
+        } else {
+            addItem(newItem)
+            setFormData({ code: '', description: '', process: '', rubric: '', application: '' })
+        }
+        
+    }
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+        const { name, value } = e.target
+        setFormData({ ...formData, [name]: value })
+    }
 
     const handleSelectChange = (name, value) => {
-        setFormData({ ...formData, [name]: value });
-        console.log(formData);
-    };
+        setFormData({ ...formData, [name]: value })
+    }
 
     return (
-        <div className="w-full h-full bg-gray-100">
+        <div className="w-full h-full bg-gray-100 font-inter">
             <NavBar />
             <form className="mt-4 px-32 py-32" onSubmit={handleSubmit}>
                 <div className="flex gap-8">
                     <SelectField
                         handleSelectChange={handleSelectChange}
-                        name="grupo"
+                        name="code"
                         label={'Grupo'}
-                        items={groupItems}
+                        items={groups}
                         placeholder={'Selecione'}
-                        width={'min-w-[100px]'}
-                    />
-                    <SelectField
-                        handleSelectChange={handleSelectChange}
-                        name="item"
-                        label={'Item'}
-                        items={groupItems}
-                        placeholder={'Selecione'}
-                        width={'min-w-[100px]'}
-                    />
-                    <SelectField
-                        handleSelectChange={handleSelectChange}
-                        name="subItem"
-                        label={'Sub Item'}
-                        items={groupItems}
-                        placeholder={'Selecione'}
-                        width={'min-w-[100px]'}
+                        width={'min-w-[200px]'}
+                        value={formData.code}
                     />
                     <div>
                         <div className="mb-2">
@@ -104,8 +93,8 @@ const ItemRegistration = () => {
                         <Input
                             className="border border-gray-300 w-[300px]"
                             type="text"
-                            name="descricao"
-                            value={formData.descricao}
+                            name="description"
+                            value={formData.description}
                             onChange={handleChange}
                             placeholder="Descrição"
                             fixedBg={true}
@@ -113,51 +102,37 @@ const ItemRegistration = () => {
                     </div>
                     <SelectField
                         handleSelectChange={handleSelectChange}
-                        name="processo"
+                        name="process"
                         label={'Processo'}
                         items={processItems}
-                        placeholder={'Selecion.'}
-                        width={'min-w-[140px]'}
+                        placeholder={'Selecione'}
+                        width={'min-w-[200px]'}
+                        value={formData.process}
                     />
-                    <div>
-                        <div className="mb-2">
-                            <label>Valor</label>
-                        </div>
-                        <MaskInput
-                            className="border border-gray-300"
-                            mask="999.999,99"
-                            type="text"
-                            name="valor"
-                            value={formData.valor}
-                            onChange={handleChange}
-                            placeholder="0.00"
-                            fixedBg={true}
-                        />
-                    </div>
                 </div>
                 <div className="flex gap-8 mt-8">
                     <div className="w-3/5">
                         <div className="mb-2">
                             <label>Rubrica</label>
                         </div>
-                        <Textarea name="rubrica" onChange={handleChange} value={formData.rubrica}/>
+                        <Textarea name="rubric" onChange={handleChange} value={formData.rubric} />
                     </div>
                     <div className="w-2/5">
                         <div className="mb-2">
                             <label>Aplicação</label>
                         </div>
-                        <Textarea name="aplicacao" onChange={handleChange} value={formData.aplicacao}/>
+                        <Textarea name="application" onChange={handleChange} value={formData.application} />
                     </div>
                 </div>
                 <div className="float-right">
-                    <button className="w-36 mt-4 py-1 text-md text-gray-700 border border-blue-900 rounded-full hover:bg-blue-900 hover:text-white">
-                        Novo
+                    <button className="w-36 mt-4 py-1 text-sm hover:text-gray-700 border border-blue-900 rounded-full bg-blue-900 hover:bg-gray-100 text-white">
+                        {isEditMode ? 'Salvar' : 'Novo'}
                     </button>
                 </div>
                 <Table />
             </form>
         </div>
-    );
-};
+    )
+}
 
-export default ItemRegistration;
+export default ItemRegistration

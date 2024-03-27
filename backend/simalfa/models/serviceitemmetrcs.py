@@ -1,11 +1,27 @@
 from django.db import models
-from models.abstracts import EntityCommonAbstract
-from models.metrics import Metrics
-from backend.simalfa.models.serviceitem import ServiceItem
-from models.tenant import Tenant
+from rest_framework import serializers
+from simalfa.models.abstracts import ActiveBaseAbstract
+from simalfa.models.metrics import Metrics
+from simalfa.models.tenant import Tenant
+from simalfa.models.metrics import Metrics, MetricsPropertiesSerializer
 
-class ServiceItemMetrics(EntityCommonAbstract):
+class ServiceItemMetrics(ActiveBaseAbstract):
     value = models.DecimalField(max_digits=25, decimal_places=5)
-    service_item = models.ManyToManyField(ServiceItem, null=False)
-    metrics = models.ManyToManyField(Metrics, null=False)
-    tenant = models.ManyToManyField(Tenant)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    metric = models.ForeignKey(Metrics, null=True, blank=True, on_delete=models.CASCADE)
+    
+class ServiceItemMetricsPropertiesSerializer(serializers.ModelSerializer):
+    metric = serializers.SerializerMethodField()
+    class Meta:
+        model = ServiceItemMetrics
+        exclude = ['tenant']
+    
+    def get_metric(self, obj):
+        instance = obj.metric
+        if instance:
+            return MetricsPropertiesSerializer(instance).data
+
+class ServiceItemMetricsListCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceItemMetrics
+        exclude = ['active']
