@@ -9,9 +9,9 @@ const RochaTable = ({ headerText, rowData }) => {
             </thead>
             <tbody>
                 {rowData.map((data, index) => (
-                    <tr key={index} className="bg-gray-300 text-black">
-                        <td className="py-1 px-2 border border-white">{data.tipo}</td>
-                        <td className="py-1 px-2 border border-white text-center">{data.qtd}</td>
+                    <tr key={index} className="bg-gray-300 text-black border border-white">
+                        <td className="py-1 px-2 border border-white">{data.description}</td>
+                        <input className="w-full py-1 px-2 bg-gray-300 text-center"/>
                     </tr>
                 ))}
             </tbody>

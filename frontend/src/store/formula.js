@@ -14,7 +14,7 @@ const useFormulaStore = create((set, get) => ({
             }))
             set(() => ({ formulas: updatedFormulas }))
         } catch (error) {
-            console.error('Error fetching items:', error)
+            console.log(error)
         }
     },
 }))

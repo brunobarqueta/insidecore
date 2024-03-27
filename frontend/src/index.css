@@ -1,10 +1,33 @@
 @import 'typeface-inter';
 @import 'typeface-nunito';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 body {
     background-color: #1C4390;
+}
+
+:root {
+    --border: hsl(0, 0%, 10%);
+    --input: hsl(0, 0%, 100%);
+    --ring: hsl(0, 0%, 0%);
+    --background: hsl(0, 0%, 100%);
+    --foreground: hsl(0, 0%, 20%);
+    --primary: hsl(30, 100%, 50%);
+    /*cor do selecionado*/
+    --primary-foreground: hsl(0, 0%, 0%);
+    --secondary: hsl(30, 100%, 50%);
+    --secondary-foreground: hsl(0, 0%, 40%);
+    --destructive: hsl(30, 100%, 50%);
+    --destructive-foreground: hsl(0, 0%, 20%);
+    --muted: hsl(0, 0%, 98%);
+    --muted-foreground: hsl(0, 0%, 28%);
+    --accent: hsl(0, 0%, 95%);
+    --accent-foreground: hsl(0, 0%, 20%);
+    --popover: hsl(30, 100%, 50%);
+    --popover-foreground: hsl(0, 0%, 30%);
+    /*hover*/
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(0, 0%, 20%);
+    --radius: 0.375rem;
 }

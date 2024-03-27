@@ -1,7 +1,8 @@
-import axios from 'axios';
 import { getRefreshToken, isAccessTokenExpired, setAuthUser } from './auth';
+
 import { API_BASE_URL } from './constants';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
 const useAxios = () => {
     const accessToken = Cookies.get('access_token');
@@ -12,7 +13,7 @@ const useAxios = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    axiosInstance.interceptors.request.use(async (req) => {
+    axiosInstance.interceptors.request.use(async(req) => {
         if (!isAccessTokenExpired(accessToken)) return req;
 
         const response = await getRefreshToken(refreshToken);

@@ -1,0 +1,16 @@
+::-webkit-scrollbar {
+    width: 12px;
+    /* Largura da barra de rolagem */
+}
+
+::-webkit-scrollbar-track {
+    background-color: #e0e0e0;
+    /* Cor de fundo da barra de rolagem */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #a7a7a7;
+    /* Cor do controle deslizante */
+    border-radius: 6px;
+    /* Borda arredondada do controle deslizante */
+}
