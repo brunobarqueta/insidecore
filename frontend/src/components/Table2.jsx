@@ -2,30 +2,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useEffect, useState } from 'react'
 
 import Input from './Input'
-import useMetricStore from '@/store/metrics'
 
-const Table2 = () => {
-    const { metrics, fetchMetrics } = useMetricStore((state) => state)
-    const [tableData, setTableData] = useState({});
-
-    useEffect(() => {
-        fetchMetrics()
-    }, [])
+const Table2 = ({ data, metricsData, setMetricsData }) => {
 
     const handleChange = (event, id) => {
-        const { name, value } = event.target;
-        setTableData(prevState => ({
+        const { name, value } = event.target
+        setMetricsData((prevState) => ({
             ...prevState,
             [id]: {
                 ...prevState[id],
-                [name]: value
-            }
-        }));
-    };
+                [name]: value,
+            },
+        }))
+    }
 
     return (
         <>
-            {metrics && metrics.length > 0 && (
+            {data && data.length > 0 && (
                 <Table className="mt-2">
                     <TableHeader>
                         <TableRow>
@@ -34,17 +27,17 @@ const Table2 = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {metrics.map((item) => (
+                        {data.map((item) => (
                             <TableRow key={item.id}>
                                 <TableCell>{item.description}</TableCell>
                                 <TableCell>
                                     <Input
                                         className="border border-gray-300 w-[300px]"
                                         type="text"
-                                        name="qtd"
-                                        value={tableData[item.id]?.qtd || ''}
+                                        name="value"
+                                        value={parseInt(metricsData[item.id]?.value) || ''}
                                         onChange={(e) => handleChange(e, item.id)}
-                                        placeholder="Descrição"
+                                        placeholder="Valor"
                                         fixedBg={true}
                                     />
                                 </TableCell>

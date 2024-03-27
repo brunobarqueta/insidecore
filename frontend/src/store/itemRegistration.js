@@ -6,18 +6,27 @@ const useItemRegistrationStore = create((set, get) => ({
     api: useAxios(),
     addItem: async(item) => {
         const { api } = get()
+        const { metrics, ...rest } = item
+
+        const metricsArray = Object.keys(metrics).map((id) => ({
+            id,
+            value: metrics[id].value,
+        }))
 
         try {
             const response = await api.post('/simalfa/api/v1/service-item/', {
-                ...item,
-                formula_fcl: 1,
-                formula_lcl: 1,
-                tenants: [1],
-                metrics: [1],
+                ...rest,
+                formula_fcl: parseInt(item.formula_fcl),
+                formula_lcl: parseInt(item.formula_lcl),
+                tenant: 1,
+                metrics: metricsArray,
             })
-            set((state) => ({ data: [...state.data, {...item, id: response.data.result.id, active: response.data.result.active }] }))
+            set((state) => ({ data: [...state.data, {...response.data.result }] }))
+
+            return response
+
         } catch (error) {
-            console.log(error)
+            return error.response.data
         }
     },
     removeItem: async(id) => {
@@ -49,27 +58,35 @@ const useItemRegistrationStore = create((set, get) => ({
             console.error('Error fetching items:', error)
         }
     },
-    editItem: async(formData) => {
+    editItem: async(formData, id) => {
         const { api } = get()
+
+        const { metrics, ...rest } = formData
+
+        const metricsArray = Object.keys(metrics).map((id) => ({
+            id,
+            value: metrics[id].value,
+        }))
         try {
-            const response = await api.put(`/simalfa/api/v1/service-item/${formData.id}/`, {
-                ...formData,
-                code: parseInt(formData.code),
-                formula_fcl: 1,
-                formula_lcl: 1,
-                tenants: [1],
-                metrics: [1],
+            const response = await api.put(`/simalfa/api/v1/service-item/${id}/`, {
+                ...rest,
+                formula_fcl: parseInt(formData.formula_fcl),
+                formula_lcl: parseInt(formData.formula_lcl),
+                tenant: 1,
+                metrics: metricsArray
             })
             set((state) => ({
                 data: state.data.map((item) => {
-                    if (item.id === formData.id) {
+                    if (item.id === parseInt(id)) {
                         return {...response.data.result }
                     }
                     return item
                 }),
             }))
+
+            return response
         } catch (error) {
-            console.error('Error updating item:', error)
+            return error.response.data
         }
     },
 }))
